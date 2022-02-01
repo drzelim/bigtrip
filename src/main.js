@@ -6,12 +6,13 @@ import { createPoint, createPointsContainer } from './view/points.js';
 import { createSort } from './view/sort.js';
 import { createTripCost } from './view/trip-cost.js';
 import { createTripInfo } from './view/trip-info.js';
-import './mock/random-point.js';
+import { getRandomPoints, offers } from './mock/random-point.js';
 
 
-const POINT_COUNT = 3;
+const POINT_COUNT = 20;
 const pageBody = document.querySelector('.page-body');
-
+const points = getRandomPoints(POINT_COUNT);
+console.log(points);
 
 const render = (container, element, position = 'beforeend') => {
   container.insertAdjacentHTML(position, element);
@@ -35,9 +36,9 @@ render(pointsContainer, createSort());
 render(pointsContainer, createPointsContainer());
 
 const listPoint = pageBody.querySelector('.trip-events__list');
-render(listPoint, createEditPoint());
+render(listPoint, createEditPoint(points[0], offers));
 render(listPoint, createNewPoint());
 
-for(let i = 0; i < POINT_COUNT; i++) {
-  render(listPoint, createPoint());
-}
+points.forEach((point) => {
+  render(listPoint, createPoint(point, offers));
+});

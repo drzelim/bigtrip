@@ -1,21 +1,39 @@
+const getOffersInfo = (point, offers) => {
+  const arr = [];
+  point.offers.forEach((item) => {
+    offers.forEach((i) => {
+      if (item === i.id) {
+        arr.push(
+          `<li class="event__offer">
+            <span class="event__offer-title">${i.text}</span>
+            &plus;&euro;&nbsp;
+            <span class="event__offer-price">${i.price}</span>
+          </li>`
+        );
+      }
+    });
+  });
+  return arr;
+};
+
 const createPointsContainer = () => (
   `<ul class="trip-events__list">
   </ul>`
 );
 
-const createPoint = () => (
+const createPoint = (point, offers) => (
   `<li class="trip-events__item">
     <div class="event">
-      <time class="event__date" datetime="2019-03-18">MAR 18</time>
+      <time class="event__date" datetime="2019-03-18">${point.day}</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">Taxi Amsterdam</h3>
+      <h3 class="event__title">${point.type} ${point.city}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+          <time class="event__start-time" datetime="2019-03-18T10:30">${point.startTime}</time>
           &mdash;
-          <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+          <time class="event__end-time" datetime="2019-03-18T11:00">${point.endTime}</time>
         </p>
         <p class="event__duration">30M</p>
       </div>
@@ -24,11 +42,7 @@ const createPoint = () => (
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        <li class="event__offer">
-          <span class="event__offer-title">Order Uber</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">20</span>
-        </li>
+        ${getOffersInfo(point, offers).join(' ')}
       </ul>
       <button class="event__favorite-btn event__favorite-btn--active" type="button">
         <span class="visually-hidden">Add to favorite</span>
