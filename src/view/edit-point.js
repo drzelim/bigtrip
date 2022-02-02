@@ -1,5 +1,3 @@
-import { offers as randomOffers } from '../mock/random-point.js';
-
 const getOffers = (point, offers) => {
   const arr = [];
   point.offers.forEach((item) => {

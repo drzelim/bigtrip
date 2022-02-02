@@ -1,5 +1,4 @@
 import { getRandomInt, getRandomArrayElement, getRandomArrayLength } from './random-generator.js';
-import { getOffersInfo } from '../view/points.js';
 
 const pointType = [
   'Taxi',
@@ -42,43 +41,41 @@ const decriptions = [
   'Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.'
 ];
 
-const days = [
-  'MAR 20',
-  'MAR 23',
-  'MAR 24',
-  'MAR 29',
-  'MAR 30',
-  'APR 02'
-];
-
 const startTime = [
-  '10:30',
-  '11:00',
-  '12:00',
-  '14:25',
-  '21:00'
+  '2022-02-02T17:36:32.554Z',
+  '2021-12-29T11:44:32.554Z',
+  '2022-01-04T01:01:32.554Z',
+  '2022-01-10T22:24:32.554Z',
+  '2022-01-12T22:20:32.554Z',
+  '2022-01-01T22:20:32.554Z',
+  '2021-11-30T17:36:32.554Z',
+  '2021-07-30T17:36:32.554Z',
+  '2022-01-14T14:20:32.554Z'
 ];
 
 const endTime = [
-  '11:30',
-  '12:00',
-  '12:30',
-  '15:00',
-  '21:45'
+  '2022-02-02T18:46:32.554Z',
+  '2021-12-29T12:44:32.554Z',
+  '2022-01-04T02:01:32.554Z',
+  '2022-01-10T22:54:32.554Z',
+  '2022-01-12T22:20:32.554Z',
+  '2022-01-01T22:55:32.554Z',
+  '2021-11-30T19:20:32.554Z',
+  '2021-07-30T18:15:32.554Z',
+  '2022-02-16T16:20:32.554Z'
 ];
 
 const getRandomPoint = () => {
   const randomIndex = getRandomInt(0, startTime.length - 1);
   return ({
+    basePrice: getRandomInt(5, 20) * 10,
     type: getRandomArrayElement(pointType),
     city: getRandomArrayElement(cities),
     offers: getRandomArrayLength(offers, 0, 4).map((item) => item.id),
     place: {
-      decription: getRandomArrayLength(decriptions, 1, decriptions.length - 1),
+      decription: getRandomArrayLength(decriptions, 0, decriptions.length - 1),
       photo: `http://picsum.photos/248/152?r=${Math.random()}`
     },
-    eventDate: new Date().toISOString(),
-    day: getRandomArrayElement(days),
     startTime: startTime[randomIndex],
     endTime: endTime[randomIndex],
     isFavorite: Math.random() > 0.5,

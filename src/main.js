@@ -12,17 +12,17 @@ import { getRandomPoints, offers } from './mock/random-point.js';
 const POINT_COUNT = 20;
 const pageBody = document.querySelector('.page-body');
 const points = getRandomPoints(POINT_COUNT);
-console.log(points);
+// console.log(points);
 
 const render = (container, element, position = 'beforeend') => {
   container.insertAdjacentHTML(position, element);
 };
 
 const tripMainContainer = pageBody.querySelector('.trip-main');
-render(tripMainContainer, createTripInfo(), 'afterbegin');
+render(tripMainContainer, createTripInfo(points), 'afterbegin');
 
 const tripCostContainer = tripMainContainer.querySelector('.trip-info');
-render(tripCostContainer, createTripCost());
+render(tripCostContainer, createTripCost(points));
 
 const navContainer = pageBody.querySelector('.trip-controls__navigation');
 render(navContainer, createMenu());
