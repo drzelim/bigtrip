@@ -1,3 +1,5 @@
+import Abstract from './abstarct';
+
 const createMenu = () => (
   `<nav class="trip-controls__trip-tabs  trip-tabs">
     <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
@@ -5,4 +7,8 @@ const createMenu = () => (
   </nav>`
 );
 
-export {createMenu};
+export default class SiteMenu extends Abstract {
+  getTemplate() {
+    return createMenu();
+  }
+}

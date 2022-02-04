@@ -1,3 +1,5 @@
+import Abstract from './abstarct';
+
 const createNewPoint = () => (
   `<form class="event event--edit" action="#" method="post">
     <header class="event__header">
@@ -161,4 +163,8 @@ const createNewPoint = () => (
   </form>`
 );
 
-export {createNewPoint};
+export default class NewPoint extends Abstract {
+  getTemplate() {
+    return createNewPoint();
+  }
+}

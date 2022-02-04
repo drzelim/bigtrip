@@ -1,3 +1,5 @@
+import Abstract from './abstarct';
+
 const getOffers = (point, offers) => {
   const arr = [];
   point.offers.forEach((item) => {
@@ -149,4 +151,15 @@ const createEditPoint = (point, offers) => {
   );
 };
 
-export {createEditPoint};
+export default class EditPoint extends Abstract {
+  constructor(point, offers) {
+    super();
+
+    this._point = point;
+    this._offers = offers;
+  }
+
+  getTemplate() {
+    return createEditPoint(this._point, this._offers);
+  }
+}
