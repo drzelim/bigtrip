@@ -1,5 +1,5 @@
 import { getRandomPoints, offers } from './mock/random-point.js';
-import { render, RenderPosition } from './utils/render.js';
+import { remove, render, RenderPosition, replace } from './utils/render.js';
 import EditPointView from './view/edit-point.js';
 import Filter from './view/list-filter.js';
 import SiteMenuView from './view/menu.js';
@@ -21,68 +21,70 @@ const renderPoints = (container, point, data) => {
   const pointComponent = new PointView(point, data);
   const editPointComponent = new EditPointView(point, data);
 
-  render(container, pointComponent.getElement());
-
   const openEditBtn = pointComponent.getElement().querySelector('.event__rollup-btn');
-  const saveFormBtn = editPointComponent.getElement();
-  const closeEditBtn = editPointComponent.getElement().querySelector('.event__rollup-btn');
 
   const closeEditFormOnEsc = (evt) => {
     if (evt.key === 'Esc' || evt.key === 'Escape') {
-      container.replaceChild(
-        pointComponent.getElement(),
-        editPointComponent.getElement()
-      );
+      replace(pointComponent, editPointComponent);
+      // remove(editPointComponent);
       document.removeEventListener('keydown', closeEditFormOnEsc);
     }
   };
 
   const replacePointComponent = () => {
-    container.replaceChild( editPointComponent.getElement(), pointComponent.getElement());
+    replace(editPointComponent, pointComponent);
+
+    const saveFormBtn = editPointComponent.getElement();
     saveFormBtn.addEventListener('submit', (evt) => {
       evt.preventDefault();
-      container.replaceChild(pointComponent.getElement(), editPointComponent.getElement());
+      replace(pointComponent, editPointComponent);
+      // remove(editPointComponent);
       document.removeEventListener('keydown', closeEditFormOnEsc);
     });
 
+    const closeEditBtn = editPointComponent.getElement().querySelector('.event__rollup-btn');
     closeEditBtn.addEventListener('click', (evt) => {
       evt.preventDefault();
-      container.replaceChild( pointComponent.getElement(), editPointComponent.getElement());
+      replace(pointComponent, editPointComponent);
+      // remove(editPointComponent);
       document.removeEventListener('keydown', closeEditFormOnEsc);
     });
 
     document.addEventListener('keydown', closeEditFormOnEsc);
+
   };
 
   openEditBtn.addEventListener('click', replacePointComponent);
+
+  render(container, pointComponent);
 };
 
 const tripMainContainer = pageBody.querySelector('.trip-main');
 
 const navContainer = pageBody.querySelector('.trip-controls__navigation');
-render(navContainer, new SiteMenuView().getElement());
+render(navContainer, new SiteMenuView());
 
 const filterContainer = pageBody.querySelector('.trip-controls__filters');
-render(filterContainer, new Filter().getElement());
+render(filterContainer, new Filter());
 
 const pointsContainer = pageBody.querySelector('.trip-events');
 
 if (points.length === 0) {
-  render(pointsContainer, new NoPoints().getElement());
+  render(pointsContainer, new NoPoints());
 } else {
   const tripInfoComponent = new TripInfoView(points);
-  render(tripMainContainer, tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
+  render(tripMainContainer, tripInfoComponent, RenderPosition.AFTERBEGIN);
 
-  const tripCostContainer = tripInfoComponent.getElement();
+  const tripCostContainer = tripInfoComponent;
   const tripCostComponent = new TripCostView(points);
-  render(tripCostContainer, tripCostComponent.getElement());
+  render(tripCostContainer, tripCostComponent);
 
-  render(pointsContainer, new SortView().getElement());
+  render(pointsContainer, new SortView());
 
   const pointListComponent = new PointListView();
-  render(pointsContainer, pointListComponent.getElement());
+  render(pointsContainer, pointListComponent);
 
   points.forEach((point) => {
-    renderPoints(pointListComponent.getElement(), point, offers);
+    renderPoints(pointListComponent, point, offers);
   });
 }
