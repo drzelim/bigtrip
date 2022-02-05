@@ -79,9 +79,21 @@ export default class Point extends Abstract {
 
     this._point = point;
     this._offers = offers;
+
+    this._pointClickHandler = this._pointClickHandler.bind(this);
   }
 
   getTemplate() {
     return createPoint(this._point, this._offers);
+  }
+
+  _pointClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.pointClick();
+  }
+
+  setPointClickHandler(pointClick) {
+    this._callback.pointClick = pointClick;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this. _pointClickHandler);
   }
 }

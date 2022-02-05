@@ -151,6 +151,32 @@ const getRandomPoints = ((amount) => {
 
 /***/ }),
 
+/***/ "./src/utils/common.js":
+/*!*****************************!*\
+  !*** ./src/utils/common.js ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getOffers": () => (/* binding */ getOffers)
+/* harmony export */ });
+const getOffers = (point, offers) => {
+  const arr = [];
+  point.offers.forEach((item) => {
+    offers.forEach((offer) => {
+      if (item === offer.id) {
+        arr.push(offer);
+      }
+    });
+  });
+  return arr;
+};
+
+
+/***/ }),
+
 /***/ "./src/utils/render.js":
 /*!*****************************!*\
   !*** ./src/utils/render.js ***!
@@ -162,14 +188,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "RenderPosition": () => (/* binding */ RenderPosition),
 /* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "createElement": () => (/* binding */ createElement)
+/* harmony export */   "createElement": () => (/* binding */ createElement),
+/* harmony export */   "replace": () => (/* binding */ replace),
+/* harmony export */   "remove": () => (/* binding */ remove)
 /* harmony export */ });
+/* harmony import */ var _view_abstarct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../view/abstarct.js */ "./src/view/abstarct.js");
+
+
 const RenderPosition = {
   AFTERBEGIN: 'afterbegin',
   BEFOREEND:  'beforeend'
 };
 
 const render = (container, element, place = RenderPosition.BEFOREEND) => {
+  if (container instanceof _view_abstarct_js__WEBPACK_IMPORTED_MODULE_0__["default"]) {
+    container = container.getElement();
+  }
+
+  if (element instanceof _view_abstarct_js__WEBPACK_IMPORTED_MODULE_0__["default"]) {
+    element = element.getElement();
+  }
+
   switch (place) {
     case RenderPosition.AFTERBEGIN:
       container.prepend(element);
@@ -185,6 +224,36 @@ const createElement = (template) => {
   newElement.innerHTML = template;
 
   return newElement.firstChild;
+};
+
+
+const replace = (newChild, oldChild) => {
+  if (newChild instanceof _view_abstarct_js__WEBPACK_IMPORTED_MODULE_0__["default"]) {
+    newChild = newChild.getElement();
+  }
+
+  if (oldChild instanceof _view_abstarct_js__WEBPACK_IMPORTED_MODULE_0__["default"]) {
+    oldChild = oldChild.getElement();
+  }
+
+  const parent = oldChild.parentElement;
+  // console.log(oldChild)
+  // console.log(parent)
+
+  if (parent === null || oldChild === null || newChild === null) {
+    throw new Error('Can\'t replace unexisting elements');
+  }
+
+  parent.replaceChild(newChild, oldChild);
+};
+
+const remove = (component) => {
+  if (!(component instanceof _view_abstarct_js__WEBPACK_IMPORTED_MODULE_0__["default"])) {
+    throw new Error('Can remove only components');
+  }
+
+  component.getElement().remove();
+  component.removeElement();
 };
 
 
@@ -207,10 +276,11 @@ __webpack_require__.r(__webpack_exports__);
 class Abstract {
   constructor() {
     if (new.target === Abstract) {
-      throw new Error('Can\'t instantiate AbstractComponent, only cocrete one.');
+      throw new Error('Can\'t instantiate Abstract, only cocrete one.');
     }
 
     this._element = null;
+    this._callback = {};
   }
 
   getTemplate() {
@@ -244,20 +314,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ EditPoint)
 /* harmony export */ });
-/* harmony import */ var _abstarct__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./abstarct */ "./src/view/abstarct.js");
+/* harmony import */ var _abstarct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./abstarct.js */ "./src/view/abstarct.js");
+/* harmony import */ var _utils_common_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/common.js */ "./src/utils/common.js");
 
 
-const getOffers = (point, offers) => {
-  const arr = [];
-  point.offers.forEach((item) => {
-    offers.forEach((offer) => {
-      if (item === offer.id) {
-        arr.push(offer);
-      }
-    });
-  });
-  return arr;
-};
 
 
 const getOfferCheckbox = (offers) => {
@@ -283,7 +343,7 @@ const price = (offers) => {
 };
 
 const createEditPoint = (point, offers) => {
-  const fullOffers = getOffers(point, offers);
+  const fullOffers = (0,_utils_common_js__WEBPACK_IMPORTED_MODULE_1__.getOffers)(point, offers);
   return (
     `<form class="event event--edit" action="#" method="post">
       <header class="event__header">
@@ -398,16 +458,39 @@ const createEditPoint = (point, offers) => {
   );
 };
 
-class EditPoint extends _abstarct__WEBPACK_IMPORTED_MODULE_0__["default"] {
+class EditPoint extends _abstarct_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor(point, offers) {
     super();
 
     this._point = point;
     this._offers = offers;
+
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formCloseClickHandler = this._formCloseClickHandler.bind(this);
   }
 
   getTemplate() {
     return createEditPoint(this._point, this._offers);
+  }
+
+  _formCloseClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.onClickClose();
+  }
+
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().addEventListener('submit', this._formSubmitHandler);
+  }
+
+  setFormCloseClickHandler(callback) {
+    this._callback.onClickClose = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._formCloseClickHandler);
   }
 }
 
@@ -425,7 +508,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Filter)
 /* harmony export */ });
-/* harmony import */ var _abstarct__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./abstarct */ "./src/view/abstarct.js");
+/* harmony import */ var _abstarct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./abstarct.js */ "./src/view/abstarct.js");
 
 
 const createFilter = () => (
@@ -449,7 +532,7 @@ const createFilter = () => (
   </form>`
 );
 
-class Filter extends _abstarct__WEBPACK_IMPORTED_MODULE_0__["default"] {
+class Filter extends _abstarct_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
   getTemplate() {
     return createFilter();
   }
@@ -502,7 +585,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _abstarct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./abstarct.js */ "./src/view/abstarct.js");
 
 
-const createNoPoints = () => (`<p class="trip-events__msg">Click New Event to create your first point</p>`);
+const createNoPoints = () => ('<p class="trip-events__msg">Click New Event to create your first point</p>');
 
 // Значение отображаемого текста зависит от выбранного фильтра:
 //   * Everthing – 'Click New Event to create your first point'
@@ -643,10 +726,22 @@ class Point extends _abstarct__WEBPACK_IMPORTED_MODULE_2__["default"] {
 
     this._point = point;
     this._offers = offers;
+
+    this._pointClickHandler = this._pointClickHandler.bind(this);
   }
 
   getTemplate() {
     return createPoint(this._point, this._offers);
+  }
+
+  _pointClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.pointClick();
+  }
+
+  setPointClickHandler(pointClick) {
+    this._callback.pointClick = pointClick;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this. _pointClickHandler);
   }
 }
 
@@ -929,76 +1024,70 @@ __webpack_require__.r(__webpack_exports__);
 const POINT_COUNT = 20;
 const pageBody = document.querySelector('.page-body');
 const points = (0,_mock_random_point_js__WEBPACK_IMPORTED_MODULE_0__.getRandomPoints)(POINT_COUNT);
-console.log(points);
+// console.log(points);
 
 const renderPoints = (container, point, data) => {
 
   const pointComponent = new _view_points_js__WEBPACK_IMPORTED_MODULE_6__["default"](point, data);
   const editPointComponent = new _view_edit_point_js__WEBPACK_IMPORTED_MODULE_2__["default"](point, data);
 
-  (0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.render)(container, pointComponent.getElement());
-
-  const openEditBtn = pointComponent.getElement().querySelector('.event__rollup-btn');
-  const saveFormBtn = editPointComponent.getElement();
-  const closeEditBtn = editPointComponent.getElement().querySelector('.event__rollup-btn');
-
   const closeEditFormOnEsc = (evt) => {
     if (evt.key === 'Esc' || evt.key === 'Escape') {
-      container.replaceChild(
-        pointComponent.getElement(),
-        editPointComponent.getElement()
-      );
+      (0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.replace)(pointComponent, editPointComponent);
       document.removeEventListener('keydown', closeEditFormOnEsc);
     }
   };
 
-  const replacePointComponent = () => {
-    container.replaceChild( editPointComponent.getElement(), pointComponent.getElement());
-    saveFormBtn.addEventListener('submit', (evt) => {
-      evt.preventDefault();
-      container.replaceChild(pointComponent.getElement(), editPointComponent.getElement());
-      document.removeEventListener('keydown', closeEditFormOnEsc);
-    });
-
-    closeEditBtn.addEventListener('click', (evt) => {
-      evt.preventDefault();
-      container.replaceChild( pointComponent.getElement(), editPointComponent.getElement());
-      document.removeEventListener('keydown', closeEditFormOnEsc);
-    });
-
+  const replacePointToEdit = () => {
+    (0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.replace)(editPointComponent, pointComponent);
     document.addEventListener('keydown', closeEditFormOnEsc);
   };
 
-  openEditBtn.addEventListener('click', replacePointComponent);
+  const replaceEditToPoint = () => {
+    (0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.replace)(pointComponent, editPointComponent, );
+    document.removeEventListener('keydown', closeEditFormOnEsc);
+  };
+
+  const formSubmitHandler = () => {
+    (0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.replace)(pointComponent, editPointComponent);
+    document.removeEventListener('keydown', closeEditFormOnEsc);
+  };
+
+  pointComponent.setPointClickHandler(replacePointToEdit);
+
+  editPointComponent.setFormSubmitHandler(formSubmitHandler);
+  editPointComponent.setFormCloseClickHandler(replaceEditToPoint);
+
+  (0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.render)(container, pointComponent);
 };
 
 const tripMainContainer = pageBody.querySelector('.trip-main');
 
 const navContainer = pageBody.querySelector('.trip-controls__navigation');
-(0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.render)(navContainer, new _view_menu_js__WEBPACK_IMPORTED_MODULE_4__["default"]().getElement());
+(0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.render)(navContainer, new _view_menu_js__WEBPACK_IMPORTED_MODULE_4__["default"]());
 
 const filterContainer = pageBody.querySelector('.trip-controls__filters');
-(0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.render)(filterContainer, new _view_list_filter_js__WEBPACK_IMPORTED_MODULE_3__["default"]().getElement());
+(0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.render)(filterContainer, new _view_list_filter_js__WEBPACK_IMPORTED_MODULE_3__["default"]());
 
 const pointsContainer = pageBody.querySelector('.trip-events');
 
 if (points.length === 0) {
-  (0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.render)(pointsContainer, new _view_no_points_js__WEBPACK_IMPORTED_MODULE_10__["default"]().getElement());
+  (0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.render)(pointsContainer, new _view_no_points_js__WEBPACK_IMPORTED_MODULE_10__["default"]());
 } else {
   const tripInfoComponent = new _view_trip_info_js__WEBPACK_IMPORTED_MODULE_9__["default"](points);
-  (0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.render)(tripMainContainer, tripInfoComponent.getElement(), _utils_render_js__WEBPACK_IMPORTED_MODULE_1__.RenderPosition.AFTERBEGIN);
+  (0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.render)(tripMainContainer, tripInfoComponent, _utils_render_js__WEBPACK_IMPORTED_MODULE_1__.RenderPosition.AFTERBEGIN);
 
-  const tripCostContainer = tripInfoComponent.getElement();
+  const tripCostContainer = tripInfoComponent;
   const tripCostComponent = new _view_trip_cost_js__WEBPACK_IMPORTED_MODULE_8__["default"](points);
-  (0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.render)(tripCostContainer, tripCostComponent.getElement());
+  (0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.render)(tripCostContainer, tripCostComponent);
 
-  (0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.render)(pointsContainer, new _view_sort_js__WEBPACK_IMPORTED_MODULE_7__["default"]().getElement());
+  (0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.render)(pointsContainer, new _view_sort_js__WEBPACK_IMPORTED_MODULE_7__["default"]());
 
   const pointListComponent = new _view_point_list__WEBPACK_IMPORTED_MODULE_5__["default"]();
-  (0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.render)(pointsContainer, pointListComponent.getElement());
+  (0,_utils_render_js__WEBPACK_IMPORTED_MODULE_1__.render)(pointsContainer, pointListComponent);
 
   points.forEach((point) => {
-    renderPoints(pointListComponent.getElement(), point, _mock_random_point_js__WEBPACK_IMPORTED_MODULE_0__.offers);
+    renderPoints(pointListComponent, point, _mock_random_point_js__WEBPACK_IMPORTED_MODULE_0__.offers);
   });
 }
 

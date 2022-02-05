@@ -1,16 +1,5 @@
-import Abstract from './abstarct';
-
-const getOffers = (point, offers) => {
-  const arr = [];
-  point.offers.forEach((item) => {
-    offers.forEach((offer) => {
-      if (item === offer.id) {
-        arr.push(offer);
-      }
-    });
-  });
-  return arr;
-};
+import Abstract from './abstarct.js';
+import { getOffers } from '../utils/common.js';
 
 
 const getOfferCheckbox = (offers) => {
@@ -157,9 +146,32 @@ export default class EditPoint extends Abstract {
 
     this._point = point;
     this._offers = offers;
+
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formCloseClickHandler = this._formCloseClickHandler.bind(this);
   }
 
   getTemplate() {
     return createEditPoint(this._point, this._offers);
+  }
+
+  _formCloseClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.onClickClose();
+  }
+
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().addEventListener('submit', this._formSubmitHandler);
+  }
+
+  setFormCloseClickHandler(callback) {
+    this._callback.onClickClose = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._formCloseClickHandler);
   }
 }

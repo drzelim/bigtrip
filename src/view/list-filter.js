@@ -1,4 +1,4 @@
-import Abstract from "./abstarct";
+import Abstract from './abstarct.js';
 
 const createFilter = () => (
   `<form class="trip-filters" action="#" method="get">

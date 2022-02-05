@@ -1,5 +1,5 @@
 import { getRandomPoints, offers } from './mock/random-point.js';
-import { remove, render, RenderPosition, replace } from './utils/render.js';
+import {render, RenderPosition, replace } from './utils/render.js';
 import EditPointView from './view/edit-point.js';
 import Filter from './view/list-filter.js';
 import SiteMenuView from './view/menu.js';
@@ -14,47 +14,39 @@ import NoPoints from './view/no-points.js';
 const POINT_COUNT = 20;
 const pageBody = document.querySelector('.page-body');
 const points = getRandomPoints(POINT_COUNT);
-console.log(points);
+// console.log(points);
 
 const renderPoints = (container, point, data) => {
 
   const pointComponent = new PointView(point, data);
   const editPointComponent = new EditPointView(point, data);
 
-  const openEditBtn = pointComponent.getElement().querySelector('.event__rollup-btn');
-
   const closeEditFormOnEsc = (evt) => {
     if (evt.key === 'Esc' || evt.key === 'Escape') {
       replace(pointComponent, editPointComponent);
-      // remove(editPointComponent);
       document.removeEventListener('keydown', closeEditFormOnEsc);
     }
   };
 
-  const replacePointComponent = () => {
+  const replacePointToEdit = () => {
     replace(editPointComponent, pointComponent);
-
-    const saveFormBtn = editPointComponent.getElement();
-    saveFormBtn.addEventListener('submit', (evt) => {
-      evt.preventDefault();
-      replace(pointComponent, editPointComponent);
-      // remove(editPointComponent);
-      document.removeEventListener('keydown', closeEditFormOnEsc);
-    });
-
-    const closeEditBtn = editPointComponent.getElement().querySelector('.event__rollup-btn');
-    closeEditBtn.addEventListener('click', (evt) => {
-      evt.preventDefault();
-      replace(pointComponent, editPointComponent);
-      // remove(editPointComponent);
-      document.removeEventListener('keydown', closeEditFormOnEsc);
-    });
-
     document.addEventListener('keydown', closeEditFormOnEsc);
-
   };
 
-  openEditBtn.addEventListener('click', replacePointComponent);
+  const replaceEditToPoint = () => {
+    replace(pointComponent, editPointComponent, );
+    document.removeEventListener('keydown', closeEditFormOnEsc);
+  };
+
+  const formSubmitHandler = () => {
+    replace(pointComponent, editPointComponent);
+    document.removeEventListener('keydown', closeEditFormOnEsc);
+  };
+
+  pointComponent.setPointClickHandler(replacePointToEdit);
+
+  editPointComponent.setFormSubmitHandler(formSubmitHandler);
+  editPointComponent.setFormCloseClickHandler(replaceEditToPoint);
 
   render(container, pointComponent);
 };
