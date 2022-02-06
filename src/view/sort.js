@@ -1,4 +1,4 @@
-import Abstract from './abstarct.js';
+import AbstractView from './abstarct.js';
 
 const createSort = () => (
   `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
@@ -29,7 +29,7 @@ const createSort = () => (
   </form>`
 );
 
-export default class Sort extends Abstract {
+export default class Sort extends AbstractView {
   getTemplate() {
     return createSort();
   }

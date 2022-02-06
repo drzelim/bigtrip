@@ -1,4 +1,4 @@
-import Abstract from './abstarct.js';
+import AbstractView from './abstarct.js';
 
 const createNoPoints = () => ('<p class="trip-events__msg">Click New Event to create your first point</p>');
 
@@ -7,7 +7,7 @@ const createNoPoints = () => ('<p class="trip-events__msg">Click New Event to cr
 //   * Past — 'There are no past events now';
 //   * Future — 'There are no future events now'.
 
-export default class NoPoints extends Abstract {
+export default class NoPoints extends AbstractView {
   getTemplate() {
     return createNoPoints();
   }

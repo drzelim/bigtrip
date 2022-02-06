@@ -1,4 +1,4 @@
-import Abstract from './abstarct';
+import AbstractView from './abstarct';
 
 const createNewPoint = () => (
   `<form class="event event--edit" action="#" method="post">
@@ -163,7 +163,7 @@ const createNewPoint = () => (
   </form>`
 );
 
-export default class NewPoint extends Abstract {
+export default class NewPoint extends AbstractView {
   getTemplate() {
     return createNewPoint();
   }

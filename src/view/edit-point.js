@@ -1,4 +1,4 @@
-import Abstract from './abstarct.js';
+import AbstractView from './abstarct.js';
 import { getOffers } from '../utils/common.js';
 
 
@@ -140,7 +140,7 @@ const createEditPoint = (point, offers) => {
   );
 };
 
-export default class EditPoint extends Abstract {
+export default class EditPoint extends AbstractView {
   constructor(point, offers) {
     super();
 

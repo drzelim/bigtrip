@@ -1,4 +1,5 @@
 import { getRandomInt, getRandomArrayElement, getRandomArrayLength } from './random-generator.js';
+import { nanoid } from 'nanoid';
 
 const pointType = [
   'Taxi',
@@ -68,6 +69,7 @@ const endTime = [
 const getRandomPoint = () => {
   const randomIndex = getRandomInt(0, startTime.length - 1);
   return ({
+    id: nanoid(10),
     basePrice: getRandomInt(5, 20) * 10,
     type: getRandomArrayElement(pointType),
     city: getRandomArrayElement(cities),

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import Abstract from './abstarct';
+import AbstractView from './abstarct';
 
 const cities = (points) => {
   const arr = points.map((point) => point.city);
@@ -53,7 +53,7 @@ const createTripInfo = (points) => {
   );
 };
 
-export default class TripInfo extends Abstract {
+export default class TripInfo extends AbstractView {
   constructor (points) {
     super();
 

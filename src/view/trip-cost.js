@@ -1,4 +1,4 @@
-import Abstract from './abstarct';
+import AbstractView from './abstarct';
 
 const totalPrice = (points) => points.reduce((acc, point) => (acc += point.basePrice), 0);
 
@@ -8,7 +8,7 @@ const createTripCost = (points) => (
   </p>`
 );
 
-export default class TripCost extends Abstract {
+export default class TripCost extends AbstractView {
   constructor (points) {
     super();
 

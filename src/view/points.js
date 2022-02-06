@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import Abstract from './abstarct';
+import AbstractView from './abstarct';
 dayjs.extend(duration);
 
 const getOffersInfo = (point, offers) => {
@@ -73,7 +73,7 @@ const createPoint = (point, offers) => {
   );
 };
 
-export default class Point extends Abstract {
+export default class Point extends AbstractView {
   constructor(point, offers) {
     super();
 
@@ -81,6 +81,7 @@ export default class Point extends Abstract {
     this._offers = offers;
 
     this._pointClickHandler = this._pointClickHandler.bind(this);
+    this._favoriteChangeHandler = this._favoriteChangeHandler.bind(this);
   }
 
   getTemplate() {
@@ -95,5 +96,15 @@ export default class Point extends Abstract {
   setPointClickHandler(pointClick) {
     this._callback.pointClick = pointClick;
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this. _pointClickHandler);
+  }
+
+  _favoriteChangeHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteChange();
+  }
+
+  setFavoriteChangeHandler(callback) {
+    this._callback.favoriteChange = callback;
+    this.getElement().querySelector('.event__favorite-btn').addEventListener('click', this._favoriteChangeHandler);
   }
 }

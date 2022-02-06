@@ -1,4 +1,4 @@
-import Abstract from './abstarct';
+import AbstractView from './abstarct';
 
 const createMenu = () => (
   `<nav class="trip-controls__trip-tabs  trip-tabs">
@@ -7,7 +7,7 @@ const createMenu = () => (
   </nav>`
 );
 
-export default class SiteMenu extends Abstract {
+export default class SiteMenu extends AbstractView {
   getTemplate() {
     return createMenu();
   }
