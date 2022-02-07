@@ -97,4 +97,9 @@ export default class Point {
       this._replaceEditToPoint();
     }
   }
+
+  destroy() {
+    remove(this._pointComponent);
+    remove(this._editPointComponent);
+  }
 }

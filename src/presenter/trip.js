@@ -5,13 +5,19 @@ import SortView from '../view/sort.js';
 import PointListView from '../view/point-list';
 import NoPoints from '../view/no-points.js';
 import PointPresenter from './point.js';
-import { updateItem } from '../utils/common.js';
+import { sortByTime, updateItem } from '../utils/common.js';
+import { SORT_TYPE } from '../utils/const.js';
+import dayjs from 'dayjs';
+
 
 export default class Trip {
   constructor(pageBody, points, offers) {
     this._points = points;
     this._offers = offers;
     this._pageBody = pageBody;
+
+    this._sortedPoints = this._points;
+    this._sortType = SORT_TYPE.TIME;
 
     this._pointsContainer = null;
 
@@ -25,6 +31,7 @@ export default class Trip {
 
     this._onFavoriteChange = this._onFavoriteChange.bind(this);
     this._onCloseAllEdit = this._onCloseAllEdit.bind(this);
+    this._onSortPoints = this._onSortPoints.bind(this);
   }
 
   init() {
@@ -48,7 +55,7 @@ export default class Trip {
   }
 
   _renderPoints() {
-    this._points.forEach((point) => {
+    this._sortedPoints.forEach((point) => {
       this._renderPoint(this._pointListComponent, point, this._offers);
     });
   }
@@ -69,6 +76,7 @@ export default class Trip {
   }
 
   _renderSort() {
+    this._sortComponent.changeSortHandler(this._onSortPoints);
     render(this._pointsContainer, this._sortComponent);
   }
 
@@ -84,5 +92,24 @@ export default class Trip {
   _onCloseAllEdit() {
     Object.values(this._renderingPointPresenters).
       forEach((presenter) => presenter.resetEditDefault());
+  }
+
+  _onSortPoints(sortType) {
+    this._sortType = sortType;
+
+    Object.values(this._renderingPointPresenters).
+      forEach((presenter) => presenter.destroy());
+
+    if (this._sortType === SORT_TYPE.PRICE) {
+      this._sortedPoints = this._points.slice().sort((a, b) => b.basePrice - a.basePrice);
+    }
+    if (this._sortType === SORT_TYPE.TIME) {
+      this._sortedPoints = this._points.slice().sort(sortByTime);
+    }
+    if (this._sortType === SORT_TYPE.DAY) {
+      this._sortedPoints = this._points;
+    }
+
+    this._renderPoints();
   }
 }

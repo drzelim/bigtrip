@@ -1,9 +1,10 @@
 import AbstractView from './abstarct.js';
+import { SORT_TYPE } from '../utils/const.js';
 
 const createSort = () => (
   `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     <div class="trip-sort__item  trip-sort__item--day">
-      <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day">
+      <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day" data-name="day" checked>
       <label class="trip-sort__btn" for="sort-day">Day</label>
     </div>
 
@@ -13,12 +14,12 @@ const createSort = () => (
     </div>
 
     <div class="trip-sort__item  trip-sort__item--time">
-      <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time">
+      <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time" data-name="time">
       <label class="trip-sort__btn" for="sort-time">Time</label>
     </div>
 
     <div class="trip-sort__item  trip-sort__item--price">
-      <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price" checked>
+      <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price" data-name="price">
       <label class="trip-sort__btn" for="sort-price">Price</label>
     </div>
 
@@ -30,7 +31,26 @@ const createSort = () => (
 );
 
 export default class Sort extends AbstractView {
+
+  constructor() {
+    super();
+
+    this._onSortHandler = this._onSortHandler.bind(this);
+  }
+
   getTemplate() {
     return createSort();
+  }
+
+  _onSortHandler(evt) {
+    if (evt.target.dataset.name === 'day' || evt.target.dataset.name === 'time' || evt.target.dataset.name === 'price') {
+      evt.preventDefault();
+      this._callback.sortHandler(evt.target.dataset.name);
+    }
+  }
+
+  changeSortHandler(callback) {
+    this._callback.sortHandler = callback;
+    this.getElement().addEventListener('click', this._onSortHandler);
   }
 }
