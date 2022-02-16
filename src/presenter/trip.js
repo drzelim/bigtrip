@@ -7,7 +7,6 @@ import NoPoints from '../view/no-points.js';
 import PointPresenter from './point.js';
 import { sortByTime, updateItem } from '../utils/common.js';
 import { SORT_TYPE } from '../utils/const.js';
-import dayjs from 'dayjs';
 
 
 export default class Trip {
@@ -17,7 +16,7 @@ export default class Trip {
     this._pageBody = pageBody;
 
     this._sortedPoints = this._points;
-    this._sortType = SORT_TYPE.TIME;
+    this._sortType = SORT_TYPE.DAY;
 
     this._pointsContainer = null;
 
@@ -95,6 +94,10 @@ export default class Trip {
   }
 
   _onSortPoints(sortType) {
+    if (sortType === this._sortType) {
+      return;
+    }
+
     this._sortType = sortType;
 
     Object.values(this._renderingPointPresenters).

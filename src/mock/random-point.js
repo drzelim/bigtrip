@@ -26,20 +26,94 @@ const cities = [
 
 export const offers = [
   {id: 1, text: 'Order Uber', price: 20, type: getRandomArrayElement(pointType)},
-  {id: 2, text: 'Add luggage', price: 50},
-  {id: 3, text: 'Switch to comfort', price: 80},
-  {id: 4, text: 'Rent a car', price: 200},
-  {id: 5, text: 'Add breakfast', price: 50},
-  {id: 6, text: 'Lunch in city', price: 30},
-  {id: 7, text: 'Book tickets', price: 40},
+  {id: 2, text: 'Add luggage', price: 50, type: getRandomArrayElement(pointType)},
+  {id: 3, text: 'Switch to comfort', price: 80, type: getRandomArrayElement(pointType)},
+  {id: 4, text: 'Rent a car', price: 200, type: getRandomArrayElement(pointType)},
+  {id: 5, text: 'Add breakfast', price: 50, type: getRandomArrayElement(pointType)},
+  {id: 6, text: 'Lunch in city', price: 30, type: getRandomArrayElement(pointType)},
+  {id: 7, text: 'Book tickets', price: 40, type: getRandomArrayElement(pointType)},
+  {id: 8, text: 'Order Uber', price: 20, type: getRandomArrayElement(pointType)},
+  {id: 9, text: 'Add luggage', price: 50, type: getRandomArrayElement(pointType)},
+  {id: 10, text: 'Switch to comfort', price: 80, type: getRandomArrayElement(pointType)},
+  {id: 11, text: 'Rent a car', price: 200, type: getRandomArrayElement(pointType)},
+  {id: 12, text: 'Add breakfast', price: 50, type: getRandomArrayElement(pointType)},
+  {id: 13, text: 'Lunch in city', price: 30, type: getRandomArrayElement(pointType)},
+  {id: 14, text: 'Book tickets', price: 40, type: getRandomArrayElement(pointType)},
 ];
 
-const decriptions = [
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  'Cras aliquet varius magna, non porta ligula feugiat eget.',
-  'Cras aliquet varius magna, non porta ligula feugiat eget.',
-  'Fusce tristique felis at fermentum pharetra.',
-  'Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.'
+export const descriptions = [
+  {
+    description: 'Moscow. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    name: 'Moscow',
+    photo: [
+      {
+        src: `http://picsum.photos/248/152?r=${Math.random()}`,
+        description: 'Lorem ipsum dolor'
+      }
+    ]
+  },
+  {
+    description: 'Sunja. Cras aliquet varius magna, non porta ligula feugiat eget.',
+    name: 'Sunja',
+    photo: [
+      {
+        src: `http://picsum.photos/248/152?r=${Math.random()}`,
+        description: 'Lorem ipsum dolor'
+      }
+    ]
+  },
+  {
+    description: 'London. Cras aliquet varius magna, non porta ligula feugiat eget.',
+    name: 'London',
+    photo: [
+      {
+        src: `http://picsum.photos/248/152?r=${Math.random()}`,
+        description: 'Cras aliquet varius'
+      }
+    ]
+  },
+  {
+    description: 'New-York. Fusce tristique felis at fermentum pharetra.',
+    name: 'New-York',
+    photo: [
+      {
+        src: `http://picsum.photos/248/152?r=${Math.random()}`,
+        description: 'Fusce'
+      }
+    ]
+  },
+  {
+    description: 'Amsterdam. Cras aliquet varius magna, non porta ligula feugiat eget.',
+    name: 'Amsterdam',
+    photo: [
+      {
+        src: `http://picsum.photos/248/152?r=${Math.random()}`,
+        description: 'Lorem ipsum dolor'
+      }
+    ]
+  },
+  {
+    description: 'Paris. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
+    name: 'Paris',
+    photo: [
+      {
+        src: `http://picsum.photos/248/152?r=${Math.random()}`,
+        description: 'Lorem ipsum dolor'
+      }
+    ]
+  },
+
+  {
+    description: 'Madrid. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
+    name: 'Madrid',
+    photo: [
+      {
+        src: `http://picsum.photos/248/152?r=${Math.random()}`,
+        description: 'Lorem ipsum dolor'
+      }
+    ]
+  },
+
 ];
 
 const startTime = [
@@ -66,17 +140,24 @@ const endTime = [
   '2022-02-16T16:20:32.554Z'
 ];
 
+export const getDestination = (city, desc) => desc.filter((item) => item.name === city);
+
+export const getOffersId = (arrOffers, type) => arrOffers.filter((offer) => type === offer.type).map((item) => item.id);
+
 const getRandomPoint = () => {
   const randomIndex = getRandomInt(0, startTime.length - 1);
+  const randomType = getRandomArrayElement(pointType);
+  const randomCity = getRandomArrayElement(cities);
+  const randomDescription = getDestination(randomCity, descriptions);
   return ({
     id: nanoid(10),
     basePrice: getRandomInt(5, 20) * 10,
-    type: getRandomArrayElement(pointType),
-    city: getRandomArrayElement(cities),
-    offers: getRandomArrayLength(offers, 0, 4).map((item) => item.id),
+    type: randomType,
+    city: randomCity,
+    offers: getOffersId(offers, randomType),
     place: {
-      decription: getRandomArrayLength(decriptions, 0, decriptions.length - 1),
-      photo: `http://picsum.photos/248/152?r=${Math.random()}`
+      description: randomDescription.map((item) => item.description),
+      photos: randomDescription.map((item) => item.photo).flat()
     },
     startTime: startTime[randomIndex],
     endTime: endTime[randomIndex],

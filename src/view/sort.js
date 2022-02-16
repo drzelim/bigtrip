@@ -1,5 +1,5 @@
 import AbstractView from './abstarct.js';
-import { SORT_TYPE } from '../utils/const.js';
+
 
 const createSort = () => (
   `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
@@ -44,7 +44,6 @@ export default class Sort extends AbstractView {
 
   _onSortHandler(evt) {
     if (evt.target.dataset.name === 'day' || evt.target.dataset.name === 'time' || evt.target.dataset.name === 'price') {
-      evt.preventDefault();
       this._callback.sortHandler(evt.target.dataset.name);
     }
   }

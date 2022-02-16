@@ -3,7 +3,6 @@ import TripPresenter from './presenter/trip.js';
 import SiteMenuView from './view/menu.js';
 import FilterView from './view/list-filter.js';
 import { render } from './utils/render.js';
-import { getTripDuration, sortByTime} from './utils/common.js';
 
 
 const POINT_COUNT = 20;
