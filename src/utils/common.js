@@ -1,15 +1,17 @@
 import dayjs from 'dayjs';
 
 export const getOffers = (point, offers) => {
-  const arr = [];
-  point.offers.forEach((item) => {
-    offers.forEach((offer) => {
-      if (item === offer.id) {
-        arr.push(offer);
-      }
-    });
+  const filterOffers = [];
+  Object.keys(point.isType).forEach((key) => {
+    if (point.isType[key]) {
+      offers.forEach((offer) => {
+        if (offer.type === key) {
+          filterOffers.push(offer);
+        }
+      });
+    }
   });
-  return arr;
+  return filterOffers;
 };
 
 export const updateItem = (items, update) => {

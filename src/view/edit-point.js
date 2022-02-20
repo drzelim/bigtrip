@@ -1,6 +1,8 @@
 import Smart from './smart.js';
 import { getOffers } from '../utils/common.js';
 import dayjs from 'dayjs';
+import { points } from '../main.js';
+import { descriptions, getDestination } from '../mock/random-point.js';
 
 
 const getOfferCheckbox = (offers) => {
@@ -25,10 +27,21 @@ const price = (offers) => {
   return sumPrice;
 };
 
+const getAllCities = (data) => {
+  const cities = new Set();
+  data.map((point) => cities.add(`<option value="${point.city}">${point.city}</option>`));
+  return Array.from(cities);
+};
+
 const getPhoto = (point) => point.place.photos.map((photo) => `<img class="event__photo" src="${photo.src}" alt="Event photo">`);
+
+const getIsPointType = (point) => Object.keys(point.isType).filter((key) => point.isType[key]);
+
+const getIsPointCity = (point) => Object.keys(point.isCity).filter((key) => point.isCity[key]);
 
 const createEditPoint = (point, offers) => {
   const fullOffers = getOffers(point, offers);
+  const city = getIsPointCity(point);
   return (
     `<form class="event event--edit" action="#" method="post">
       <header class="event__header">
@@ -44,62 +57,65 @@ const createEditPoint = (point, offers) => {
               <legend class="visually-hidden">Event type</legend>
 
               <div class="event__type-item">
-                <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
+                <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${point.isType.Taxi ? 'checked' : ''}>
                 <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
               </div>
 
               <div class="event__type-item">
-                <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
+                <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${point.isType.Bus ? 'checked' : ''}>
                 <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
               </div>
 
               <div class="event__type-item">
-                <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
+                <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${point.isType.Train ? 'checked' : ''}>
                 <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
               </div>
 
               <div class="event__type-item">
-                <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
+                <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${point.isType.Ship ? 'checked' : ''}>
                 <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
               </div>
 
               <div class="event__type-item">
-                <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
+                <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${point.isType.Drive ? 'checked' : ''}>
                 <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
               </div>
 
               <div class="event__type-item">
-                <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
+                <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${point.isType.Flight ? 'checked' : ''}>
                 <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
               </div>
 
               <div class="event__type-item">
-                <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
+                <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in" ${point.isType['Check-In'] ? 'checked' : ''}>
                 <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
               </div>
 
               <div class="event__type-item">
-                <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
+                <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing" ${point.isType.Sightseeing ? 'checked' : ''}>
                 <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
               </div>
 
               <div class="event__type-item">
-                <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
+                <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant" ${point.isType.Restaurant ? 'checked' : ''}>
                 <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
               </div>
+
+              <div class="event__type-item">
+                <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport" ${point.isType.Transport ? 'checked' : ''}>
+                <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
+            </div>
             </fieldset>
           </div>
         </div>
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${point.type}
+            ${getIsPointType(point).join('')}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.city}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city.join('')}" list="destination-list-1">
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+           ${getAllCities(points).join('\n')}
           </datalist>
         </div>
 
@@ -136,7 +152,7 @@ const createEditPoint = (point, offers) => {
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${point.place.description.join(' ')}</p>
+          <p class="event__destination-description">${getDestination(city[0], descriptions)[0].description}</p>
 
           <div class="event__photos-container">
             <div class="event__photos-tape">
@@ -154,14 +170,20 @@ export default class EditPoint extends Smart {
     super();
 
     this._point = point;
+    this._data = EditPoint.parsePointToData(point);
     this._offers = offers;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formCloseClickHandler = this._formCloseClickHandler.bind(this);
+    this._setChangeTypeHandler = this._setChangeTypeHandler.bind(this);
+    this._setChangeCityHandler = this._setChangeCityHandler.bind(this);
+
+    this._setChangeTypeHandler();
+    this._setChangeCityHandler();
   }
 
   getTemplate() {
-    return createEditPoint(this._point, this._offers);
+    return createEditPoint(this._data, this._offers);
   }
 
   _formCloseClickHandler(evt) {
@@ -184,11 +206,92 @@ export default class EditPoint extends Smart {
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._formCloseClickHandler);
   }
 
-  restoreHandlers() {
-
+  _setChangeTypeHandler() {
+    this.getElement().querySelector('.event__type-list').addEventListener('change', (evt) => {
+      if (evt.target.tagName === 'INPUT') {
+        Object.keys(this._data.isType).forEach((key) => {
+          if (key.toLowerCase() === evt.target.value) {
+            this._data.isType[key] = true;
+          } else {
+            this._data.isType[key] = false;
+          }
+        });
+        this.updateElement();
+      }
+    });
   }
 
-  static parsePointToData() {
+  _setChangeCityHandler() {
+    this.getElement().querySelector('#event-destination-1').addEventListener('change', (evt) => {
+      const cities = Object.keys(this._data.isCity);
+      const filter = cities.filter((item) => item === evt.target.value);
+      if (filter.length !== 0) {
+        cities.forEach((key) => {
+          if (evt.target.value === key) {
+            this._data.isCity[key] = true;
+          } else {
+            this._data.isCity[key] = false;
+          }
+        });
+        this.updateElement();
+      }
+    });
+  }
 
+  restoreHandlers() {
+    this._setChangeTypeHandler();
+    this._setChangeCityHandler();
+    this. setFormCloseClickHandler( this._callback.onClickClose);
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+  static parsePointToData(point) {
+    const TYPE = {
+      Taxi: false,
+      Bus: false,
+      Train: false,
+      Ship: false,
+      Transport: false,
+      Drive: false,
+      Flight: false,
+      'Check-In': false,
+      Sightseeing: false,
+      Restaurant: false
+    };
+
+    const CITIES = {
+      Moscow: false,
+      Sunja: false,
+      London: false,
+      'New-York': false,
+      Amsterdam: false,
+      Paris: false,
+      Madrid: false
+    };
+
+    Object.keys(TYPE).forEach((key) => {
+      if (point.type === key) {
+        TYPE[key] = true;
+      } else {
+        TYPE[key] = false;
+      }
+    });
+
+    Object.keys(CITIES).forEach((key) => {
+      if (point.city === key) {
+        CITIES[key] = true;
+      } else {
+        CITIES[key] = false;
+      }
+    });
+
+    return Object.assign(
+      {},
+      point,
+      {
+        isType: TYPE,
+        isCity: CITIES
+      }
+    );
   }
 }

@@ -7,7 +7,7 @@ import { render } from './utils/render.js';
 
 const POINT_COUNT = 20;
 const pageBody = document.querySelector('.page-body');
-const points = getRandomPoints(POINT_COUNT);
+export const points = getRandomPoints(POINT_COUNT);
 console.log(points);
 
 const navContainer = pageBody.querySelector('.trip-controls__navigation');

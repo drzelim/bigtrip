@@ -1,7 +1,7 @@
-import { getRandomInt, getRandomArrayElement, getRandomArrayLength } from './random-generator.js';
+import { getRandomInt, getRandomArrayElement } from './random-generator.js';
 import { nanoid } from 'nanoid';
 
-const pointType = [
+export const pointType = [
   'Taxi',
   'Bus',
   'Train',
@@ -14,7 +14,7 @@ const pointType = [
   'Restaurant'
 ];
 
-const cities = [
+export const cities = [
   'Moscow',
   'Sunja',
   'London',
@@ -142,7 +142,7 @@ const endTime = [
 
 export const getDestination = (city, desc) => desc.filter((item) => item.name === city);
 
-export const getOffersId = (arrOffers, type) => arrOffers.filter((offer) => type === offer.type).map((item) => item.id);
+export const getOffersId = (type) => offers.filter((offer) => type === offer.type).map((item) => item.id);
 
 const getRandomPoint = () => {
   const randomIndex = getRandomInt(0, startTime.length - 1);
@@ -154,7 +154,7 @@ const getRandomPoint = () => {
     basePrice: getRandomInt(5, 20) * 10,
     type: randomType,
     city: randomCity,
-    offers: getOffersId(offers, randomType),
+    offers: getOffersId(randomType),
     place: {
       description: randomDescription.map((item) => item.description),
       photos: randomDescription.map((item) => item.photo).flat()

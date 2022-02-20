@@ -71,6 +71,9 @@ export default class Point {
       document.removeEventListener('keydown', this._closeEditFormOnEsc);
       this._mode = Mode.DEFAULT;
     }
+    if(evt.key === 'Enter') {
+      evt.preventDefault();
+    }
   }
 
   _replacePointToEdit() {
