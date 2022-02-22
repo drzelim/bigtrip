@@ -13,6 +13,8 @@ export default class Point {
     this._onFavoriteChange = onFavoriteChange;
     this._onCloseAllEdit = onCloseAllEdit;
 
+    this._point = {};
+
     this._mode = Mode.DEFAULT;
     this._pointComponent = null;
     this._editPointComponent = null;
@@ -24,16 +26,16 @@ export default class Point {
   }
 
   init(point, data) {
-    this.point = point;
-    this.data = data;
+    this._point = point;
+    this._data = data;
 
     const prevPointComponent = this._pointComponent;
     const prevEditPointComponent = this._editPointComponent;
 
-    this._pointComponent = new PointView(this.point, this.data);
-    this._editPointComponent = new EditPointView(this.point, this.data);
+    this._pointComponent = new PointView(this._point, this._data);
+    this._editPointComponent = new EditPointView(this._point, this._data);
 
-    this._setAllHandlers(this.point, this._pointComponent, this._editPointComponent);
+    this._setAllHandlers(this._point, this._pointComponent, this._editPointComponent);
 
     if (prevPointComponent === null || prevEditPointComponent === null) {
       render(this._container, this._pointComponent);
@@ -67,6 +69,7 @@ export default class Point {
 
   _closeEditFormOnEsc(evt) {
     if (evt.key === 'Esc' || evt.key === 'Escape') {
+      this._editPointComponent.reset(this._point);
       replace(this._pointComponent, this._editPointComponent);
       document.removeEventListener('keydown', this._closeEditFormOnEsc);
       this._mode = Mode.DEFAULT;
@@ -84,6 +87,7 @@ export default class Point {
   }
 
   _replaceEditToPoint() {
+    this._editPointComponent.reset(this._point);
     replace(this._pointComponent, this._editPointComponent);
     document.removeEventListener('keydown', this._closeEditFormOnEsc);
     this._mode = Mode.DEFAULT;

@@ -7,6 +7,7 @@ import NoPoints from '../view/no-points.js';
 import PointPresenter from './point.js';
 import { sortByTime, updateItem } from '../utils/common.js';
 import { SORT_TYPE } from '../utils/const.js';
+import NewPoint from '../view/new-point.js';
 
 
 export default class Trip {
@@ -31,6 +32,9 @@ export default class Trip {
     this._onFavoriteChange = this._onFavoriteChange.bind(this);
     this._onCloseAllEdit = this._onCloseAllEdit.bind(this);
     this._onSortPoints = this._onSortPoints.bind(this);
+    this._addNewPointHandler = this._addNewPointHandler.bind(this);
+
+    this._addNewPointHandler();
   }
 
   init() {
@@ -114,5 +118,13 @@ export default class Trip {
     }
 
     this._renderPoints();
+  }
+
+  _addNewPointHandler() {
+    document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+      evt.preventDefault();
+      const newPoint = new NewPoint({},this._offers);
+      render(this._pointsContainer, newPoint, RenderPosition.AFTERBEGIN);
+    });
   }
 }

@@ -3,6 +3,7 @@ import { getOffers } from '../utils/common.js';
 import dayjs from 'dayjs';
 import { points } from '../main.js';
 import { descriptions, getDestination } from '../mock/random-point.js';
+import { getAllCities, price } from '../utils/render.js';
 
 
 const getOfferCheckbox = (offers) => {
@@ -20,17 +21,6 @@ const getOfferCheckbox = (offers) => {
     ))
   );
   return arr;
-};
-
-const price = (offers) => {
-  const sumPrice = offers.reduce((acc, offer) => (acc += offer.price), 0);
-  return sumPrice;
-};
-
-const getAllCities = (data) => {
-  const cities = new Set();
-  data.map((point) => cities.add(`<option value="${point.city}">${point.city}</option>`));
-  return Array.from(cities);
 };
 
 const getPhoto = (point) => point.place.photos.map((photo) => `<img class="event__photo" src="${photo.src}" alt="Event photo">`);
@@ -104,7 +94,7 @@ const createEditPoint = (point, offers) => {
               <div class="event__type-item">
                 <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport" ${point.isType.Transport ? 'checked' : ''}>
                 <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
-            </div>
+              </div>
             </fieldset>
           </div>
         </div>
@@ -175,11 +165,10 @@ export default class EditPoint extends Smart {
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formCloseClickHandler = this._formCloseClickHandler.bind(this);
-    this._setChangeTypeHandler = this._setChangeTypeHandler.bind(this);
-    this._setChangeCityHandler = this._setChangeCityHandler.bind(this);
+    this._changeTypeHandler = this._changeTypeHandler.bind(this);
+    this._changeCityHandler = this._changeCityHandler.bind(this);
 
-    this._setChangeTypeHandler();
-    this._setChangeCityHandler();
+    this._setInnerHandlers();
   }
 
   getTemplate() {
@@ -206,42 +195,53 @@ export default class EditPoint extends Smart {
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._formCloseClickHandler);
   }
 
-  _setChangeTypeHandler() {
-    this.getElement().querySelector('.event__type-list').addEventListener('change', (evt) => {
-      if (evt.target.tagName === 'INPUT') {
-        Object.keys(this._data.isType).forEach((key) => {
-          if (key.toLowerCase() === evt.target.value) {
-            this._data.isType[key] = true;
-          } else {
-            this._data.isType[key] = false;
-          }
-        });
-        this.updateElement();
-      }
-    });
+  _changeTypeHandler(evt) {
+    if (evt.target.tagName === 'INPUT') {
+      const isType = {};
+      Object.keys(this._data.isType).forEach((key) => {
+        if (key.toLowerCase() === evt.target.value) {
+          isType[key] = true;
+        } else {
+          isType[key] = false;
+        }
+      });
+      this.updateData({isType});
+    }
   }
 
-  _setChangeCityHandler() {
-    this.getElement().querySelector('#event-destination-1').addEventListener('change', (evt) => {
-      const cities = Object.keys(this._data.isCity);
-      const filter = cities.filter((item) => item === evt.target.value);
-      if (filter.length !== 0) {
-        cities.forEach((key) => {
-          if (evt.target.value === key) {
-            this._data.isCity[key] = true;
-          } else {
-            this._data.isCity[key] = false;
-          }
-        });
-        this.updateElement();
-      }
-    });
+  _changeCityHandler(evt) {
+    const isCity = {};
+    const cities = Object.keys(this._data.isCity);
+    const filter = cities.filter((item) => item === evt.target.value);
+    if (filter.length !== 0) {
+      cities.forEach((key) => {
+        if (evt.target.value === key) {
+          isCity[key] = true;
+        } else {
+          isCity[key] = false;
+        }
+      });
+      this.updateData({isCity});
+    }
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector('#event-destination-1')
+      .addEventListener('change', this._changeCityHandler);
+
+    this.getElement()
+      .querySelector('.event__type-list')
+      .addEventListener('change', this._changeTypeHandler);
+  }
+
+  reset(data) {
+    this.updateData(EditPoint.parsePointToData(data));
   }
 
   restoreHandlers() {
-    this._setChangeTypeHandler();
-    this._setChangeCityHandler();
-    this. setFormCloseClickHandler( this._callback.onClickClose);
+    this. _setInnerHandlers();
+    this.setFormCloseClickHandler(this._callback.onClickClose);
     this.setFormSubmitHandler(this._callback.formSubmit);
   }
 
@@ -293,5 +293,24 @@ export default class EditPoint extends Smart {
         isCity: CITIES
       }
     );
+  }
+
+  static parseDataToPoint(data) {
+    data = Object.assign({}, data);
+
+    Object.keys(data.isType).forEach((key) => {
+      if (data.isType[key]) {
+        data.type = key;
+      }
+    });
+
+    Object.keys(data.isCity).forEach((key) => {
+      if (data.isCity[key]) {
+        data.city = key;
+      }
+    });
+
+    delete data.isType;
+    delete data.isCity;
   }
 }
