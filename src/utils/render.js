@@ -58,15 +58,3 @@ export const remove = (component) => {
   component.getElement().remove();
   component.removeElement();
 };
-
-
-export const getAllCities = (data) => {
-  const cities = new Set();
-  data.map((point) => cities.add(`<option value="${point.city}">${point.city}</option>`));
-  return Array.from(cities);
-};
-
-export const price = (offers) => {
-  const sumPrice = offers.reduce((acc, offer) => (acc += offer.price), 0);
-  return sumPrice;
-};

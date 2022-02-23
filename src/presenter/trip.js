@@ -129,10 +129,10 @@ export default class Trip {
         basePrice: 0,
         type: '',
         city: '',
-        offers: '',
+        offers: [],
         place: {
-          description: '',
-          photos: ''
+          description: [],
+          photos: []
         },
         startTime: '',
         endTime: '',

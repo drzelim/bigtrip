@@ -3,34 +3,10 @@ import { getOffers } from '../utils/common.js';
 import dayjs from 'dayjs';
 import { points } from '../main.js';
 import { descriptions, getDestination } from '../mock/random-point.js';
-import { getAllCities, price } from '../utils/render.js';
+import { getAllCities, getIsPointCity, getIsPointType, getOfferCheckbox, getPhoto, price } from '../utils/point.js';
 
-
-const getOfferCheckbox = (offers) => {
-  const arr = [];
-  offers.forEach((offer) => (
-    arr.push (
-      `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}" type="checkbox" name="event-offer-${offer.id}">
-        <label class="event__offer-label" for="event-offer-${offer.id}">
-          <span class="event__offer-title">${offer.text}</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">${offer.price}</span>
-        </label>
-      </div>`
-    ))
-  );
-  return arr;
-};
-
-const getPhoto = (point) => point.place.photos.map((photo) => `<img class="event__photo" src="${photo.src}" alt="Event photo">`);
-
-const getIsPointType = (point) => Object.keys(point.isType).filter((key) => point.isType[key]);
-
-const getIsPointCity = (point) => Object.keys(point.isCity).filter((key) => point.isCity[key]);
 
 const createEditPoint = (point, offers) => {
-  console.log(getIsPointType(point).join('').toLowerCase())
   const fullOffers = getOffers(point, offers);
   const city = getIsPointCity(point);
   return (
