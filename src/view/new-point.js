@@ -158,6 +158,7 @@ export default class NewPoint extends Smart {
     this._changeTypeHandler = this._changeTypeHandler.bind(this);
     this._changeCityHandler = this._changeCityHandler.bind(this);
 
+
     this._setInnerHandlers();
   }
 
