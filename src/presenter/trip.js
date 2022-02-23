@@ -138,7 +138,7 @@ export default class Trip {
         endTime: '',
         isFavorite: false,
       };
-      const newPointComponent = new NewPoint(newPoint,this._offers);
+      const newPointComponent = new NewPoint(newPoint, this._offers);
       render(this._pointsContainer, newPointComponent, RenderPosition.AFTERBEGIN);
     });
   }

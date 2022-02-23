@@ -28,6 +28,12 @@ export const getOfferCheckbox = (offers) => {
 
 export const getPhoto = (point) => point.place.photos.map((photo) => `<img class="event__photo" src="${photo.src}" alt="Event photo">`);
 
+export const getPhotoFromDestinaitons = (data, city) => {
+  const currentType = data.filter((item) => item.name === city);
+  const arrPhotos = currentType.map((item) => item.photo);
+  return arrPhotos.flat().map((item) => `<img class="event__photo" src="${item.src}" alt="${item.description}">`);
+};
+
 export const getIsPointType = (point) => Object.keys(point.isType).filter((key) => point.isType[key]);
 
 export const getIsPointCity = (point) => Object.keys(point.isCity).filter((key) => point.isCity[key]);

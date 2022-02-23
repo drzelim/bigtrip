@@ -3,19 +3,21 @@ import { getOffers } from '../utils/common.js';
 import dayjs from 'dayjs';
 import { points } from '../main.js';
 import { descriptions, getDestination } from '../mock/random-point.js';
-import { getAllCities, getIsPointCity, getIsPointType, getOfferCheckbox, getPhoto, price } from '../utils/point.js';
+import { getAllCities, getIsPointCity, getIsPointType, getOfferCheckbox, getPhotoFromDestinaitons, price } from '../utils/point.js';
 
 
 const createEditPoint = (point, offers) => {
   const fullOffers = getOffers(point, offers);
-  const city = getIsPointCity(point);
+  const city = getIsPointCity(point).join('');
+  const type = getIsPointType(point).join('');
+  const description = getDestination(city, descriptions);
   return (
     `<form class="event event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${getIsPointType(point).join('').toLowerCase()}.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -78,9 +80,9 @@ const createEditPoint = (point, offers) => {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${getIsPointType(point).join('')}
+            ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city.join('')}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
            ${getAllCities(points).join('\n')}
           </datalist>
@@ -119,11 +121,11 @@ const createEditPoint = (point, offers) => {
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${getDestination(city[0], descriptions)[0].description}</p>
+          <p class="event__destination-description">${description.length !== 0 ? description[0].description : ''}</p>
 
           <div class="event__photos-container">
             <div class="event__photos-tape">
-              ${getPhoto(point).join('\n')}
+            ${getPhotoFromDestinaitons(descriptions, city).join('\n')}
             </div>
           </div>
         </section>
@@ -231,7 +233,7 @@ export default class EditPoint extends Smart {
       Transport: false,
       Drive: false,
       Flight: false,
-      'Check-In': false,
+      'Check-in': false,
       Sightseeing: false,
       Restaurant: false
     };
