@@ -8,6 +8,7 @@ import PointPresenter from './point.js';
 import { sortByTime, updateItem } from '../utils/common.js';
 import { SORT_TYPE } from '../utils/const.js';
 import NewPoint from '../view/new-point.js';
+import { nanoid } from 'nanoid';
 
 
 export default class Trip {
@@ -123,8 +124,22 @@ export default class Trip {
   _addNewPointHandler() {
     document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
       evt.preventDefault();
-      const newPoint = new NewPoint({},this._offers);
-      render(this._pointsContainer, newPoint, RenderPosition.AFTERBEGIN);
+      const newPoint = {
+        id: nanoid(10),
+        basePrice: 0,
+        type: '',
+        city: '',
+        offers: '',
+        place: {
+          description: '',
+          photos: ''
+        },
+        startTime: '',
+        endTime: '',
+        isFavorite: false,
+      };
+      const newPointComponent = new NewPoint(newPoint,this._offers);
+      render(this._pointsContainer, newPointComponent, RenderPosition.AFTERBEGIN);
     });
   }
 }

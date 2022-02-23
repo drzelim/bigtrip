@@ -9,7 +9,7 @@ export const pointType = [
   'Transport',
   'Drive',
   'Flight',
-  'CheckIn',
+  'Check-in',
   'Sightseeing',
   'Restaurant'
 ];
