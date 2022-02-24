@@ -154,10 +154,9 @@ export default class NewPoint extends Smart {
     this._offers = offers;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
-    // this._formCloseClickHandler = this._formCloseClickHandler.bind(this);
+    this._formCloseClickHandler = this._formCloseClickHandler.bind(this);
     this._changeTypeHandler = this._changeTypeHandler.bind(this);
     this._changeCityHandler = this._changeCityHandler.bind(this);
-
 
     this._setInnerHandlers();
   }
@@ -166,10 +165,10 @@ export default class NewPoint extends Smart {
     return createNewPoint(this._data, this._offers);
   }
 
-  // _formCloseClickHandler(evt) {
-  //   evt.preventDefault();
-  //   this._callback.onClickClose();
-  // }
+  _formCloseClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.onClickClose();
+  }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
@@ -181,10 +180,10 @@ export default class NewPoint extends Smart {
     this.getElement().addEventListener('submit', this._formSubmitHandler);
   }
 
-  // setFormCloseClickHandler(callback) {
-  //   this._callback.onClickClose = callback;
-  //   this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._formCloseClickHandler);
-  // }
+  setFormCloseClickHandler(callback) {
+    this._callback.onClickClose = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formCloseClickHandler);
+  }
 
   _changeTypeHandler(evt) {
     if (evt.target.tagName === 'INPUT') {

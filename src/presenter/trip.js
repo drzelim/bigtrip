@@ -7,8 +7,7 @@ import NoPoints from '../view/no-points.js';
 import PointPresenter from './point.js';
 import { sortByTime, updateItem } from '../utils/common.js';
 import { SORT_TYPE } from '../utils/const.js';
-import NewPoint from '../view/new-point.js';
-import { nanoid } from 'nanoid';
+import NewPointPresenter from './new-point.js';
 
 
 export default class Trip {
@@ -25,6 +24,7 @@ export default class Trip {
     this._pointListComponent = new PointListView();
     this._sortComponent = new SortView();
     this._noPoints = new NoPoints();
+    this._newPointPresenter = null;
 
     this._renderingPointPresenters = {};
 
@@ -33,9 +33,6 @@ export default class Trip {
     this._onFavoriteChange = this._onFavoriteChange.bind(this);
     this._onCloseAllEdit = this._onCloseAllEdit.bind(this);
     this._onSortPoints = this._onSortPoints.bind(this);
-    this._addNewPointHandler = this._addNewPointHandler.bind(this);
-
-    this._addNewPointHandler();
   }
 
   init() {
@@ -50,12 +47,22 @@ export default class Trip {
     this._renderSort();
     this._renderPointListConatiner();
     this._renderPoints();
+    this._initNewPoint();
   }
 
   _renderPoint(container, point, data) {
     const pointPresenter = new PointPresenter (container, this._onFavoriteChange, this._onCloseAllEdit);
     pointPresenter.init(point, data);
     this._renderingPointPresenters[point.id] = pointPresenter;
+  }
+
+  _initNewPoint() {
+    const newEventBtn = document.querySelector('.trip-main__event-add-btn');
+    this._newPointPresenter = new NewPointPresenter(this._pointsContainer, this._offers, newEventBtn);
+    newEventBtn.addEventListener('click', () => {
+      this._newPointPresenter.init();
+      this._onSortPoints(SORT_TYPE.DAY);
+    });
   }
 
   _renderPoints() {
@@ -119,27 +126,5 @@ export default class Trip {
     }
 
     this._renderPoints();
-  }
-
-  _addNewPointHandler() {
-    document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
-      evt.preventDefault();
-      const newPoint = {
-        id: nanoid(10),
-        basePrice: 0,
-        type: '',
-        city: '',
-        offers: [],
-        place: {
-          description: [],
-          photos: []
-        },
-        startTime: '',
-        endTime: '',
-        isFavorite: false,
-      };
-      const newPointComponent = new NewPoint(newPoint, this._offers);
-      render(this._pointsContainer, newPointComponent, RenderPosition.AFTERBEGIN);
-    });
   }
 }

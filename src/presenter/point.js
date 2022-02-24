@@ -1,4 +1,4 @@
-import {remove, render, replace } from '../utils/render.js';
+import {remove, render, RenderPosition, replace } from '../utils/render.js';
 import EditPointView from '../view/edit-point.js';
 import PointView from '../view/points.js';
 
@@ -18,11 +18,13 @@ export default class Point {
     this._mode = Mode.DEFAULT;
     this._pointComponent = null;
     this._editPointComponent = null;
+    this._newPointComponent = null;
 
     this._replacePointToEdit = this._replacePointToEdit.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._replaceEditToPoint = this._replaceEditToPoint.bind(this);
     this._closeEditFormOnEsc = this._closeEditFormOnEsc.bind(this);
+    this._closeNewFormOnEsc = this._closeNewFormOnEsc.bind(this);
   }
 
   init(point, data) {
@@ -108,5 +110,15 @@ export default class Point {
   destroy() {
     remove(this._pointComponent);
     remove(this._editPointComponent);
+  }
+
+  _closeNewFormOnEsc(evt) {
+    if (evt.key === 'Esc' || evt.key === 'Escape') {
+      remove(this._newPointComponent);
+      document.removeEventListener('keydown', this._closeNewFormOnEsc());
+    }
+    if(evt.key === 'Enter') {
+      evt.preventDefault();
+    }
   }
 }
