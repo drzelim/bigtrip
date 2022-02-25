@@ -21,11 +21,6 @@ export default class NewPointPresenter {
   }
 
   _setNewEventBtnClickHandler() {
-    if (this._newPointComponent) {
-      this._destroy();
-      return;
-    }
-
     const newPoint = {
       id: nanoid (10),
       basePrice: 0,
@@ -36,11 +31,11 @@ export default class NewPointPresenter {
         description: [],
         photos: []
       },
-      startTime: '',
-      endTime: '',
+      startTime: new Date(),
+      endTime: new Date(),
     };
 
-    this._newEventBtn.style.opacity = '0.3';
+    this._newEventBtn.setAttribute('disabled', true);
     this._newPointComponent = new NewPoint(newPoint, this._offers);
     render(this._container, this._newPointComponent, RenderPosition.AFTERBEGIN);
     document.addEventListener('keydown', this._closeNewFormOnEsc);
@@ -54,7 +49,7 @@ export default class NewPointPresenter {
 
   _closeNewFormOnEsc(evt) {
     if (evt.key === 'Esc' || evt.key === 'Escape') {
-      this._destroy();
+      this.destroy();
       document.removeEventListener('keydown', this._closeNewFormOnEsc);
     }
     if(evt.key === 'Enter') {
@@ -62,17 +57,19 @@ export default class NewPointPresenter {
     }
   }
 
-  _destroy() {
-    remove(this._newPointComponent);
-    this._newPointComponent = null;
-    this._newEventBtn.style.opacity = '1';
+  destroy() {
+    if (this._newPointComponent) {
+      remove(this._newPointComponent);
+      this._newPointComponent = null;
+      this._newEventBtn.removeAttribute('disabled');
+    }
   }
 
   _removeNewPointHandler() {
-    this._destroy();
+    this.destroy();
   }
 
   _submitNewPointFormHandler() {
-    this._destroy();
+    this.destroy();
   }
 }

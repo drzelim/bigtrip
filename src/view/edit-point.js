@@ -4,7 +4,9 @@ import dayjs from 'dayjs';
 import { points } from '../main.js';
 import { descriptions, getDestination } from '../mock/random-point.js';
 import { getAllCities, getIsPointCity, getIsPointType, getOfferCheckbox, getPhotoFromDestinaitons, price } from '../utils/point.js';
+import flatpickr from 'flatpickr';
 
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createEditPoint = (point, offers) => {
   const fullOffers = getOffers(point, offers);
@@ -90,11 +92,12 @@ const createEditPoint = (point, offers) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(point.startTime).format('DD/MM/YY HH:mm')}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(point.startTime)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(point.endTime).format('DD/MM/YY HH:mm')}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(point.endTime)}">
         </div>
+        <span id="event__time-error" class="visually-hidden" style="color: red; font-size: 14px">Дата начала события не может быть раньше даты окончания события</span>
 
         <div class="event__field-group  event__field-group--price">
           <label class="event__label" for="event-price-1">
@@ -142,12 +145,18 @@ export default class EditPoint extends Smart {
     this._data = EditPoint.parsePointToData(point);
     this._offers = offers;
 
+    this._datePickerStart = null;
+    this._datePickerEnd = null;
+
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formCloseClickHandler = this._formCloseClickHandler.bind(this);
     this._changeTypeHandler = this._changeTypeHandler.bind(this);
     this._changeCityHandler = this._changeCityHandler.bind(this);
+    this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
+    this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDatePicker();
   }
 
   getTemplate() {
@@ -220,6 +229,7 @@ export default class EditPoint extends Smart {
 
   restoreHandlers() {
     this. _setInnerHandlers();
+    this._setDatePicker();
     this.setFormCloseClickHandler(this._callback.onClickClose);
     this.setFormSubmitHandler(this._callback.formSubmit);
   }
@@ -291,5 +301,58 @@ export default class EditPoint extends Smart {
 
     delete data.isType;
     delete data.isCity;
+  }
+
+  _setDatePicker() {
+    if (this._datePickerStart) {
+      this._datePickerStart.destroy();
+      this._datePickerStart = null;
+    }
+
+    if (this._datePickerEnd) {
+      this._datePickerEnd.destroy();
+      this._datePickerEnd = null;
+    }
+
+    this._datePickerStart = flatpickr(
+      this.getElement().querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'd-m-y H:i',
+        enableTime: true,
+        'time_24hr': true,
+        defaultDate: null,
+        onChange: this._startDateChangeHandler,
+      }
+    );
+
+    this._datePickerEnd = flatpickr(
+      this.getElement().querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'd-m-y H:i',
+        enableTime: true,
+        'time_24hr': true,
+        defaultDate: null,
+        onChange: this._endDateChangeHandler,
+      }
+    );
+  }
+
+  _startDateChangeHandler([startTime]) {
+    this.updateData({
+      startTime,
+    });
+  }
+
+  _endDateChangeHandler([endTime]) {
+    const time = this._datePickerEnd.selectedDates[0] - this._datePickerStart.selectedDates[0];
+
+    if (time < 0) {
+      this.getElement().querySelector('#event__time-error').classList.remove('visually-hidden');
+      return;
+    }
+
+    this.updateData({
+      endTime,
+    });
   }
 }

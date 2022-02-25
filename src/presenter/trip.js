@@ -46,12 +46,12 @@ export default class Trip {
     this._renderTripCost(this._tripInfoComponent);
     this._renderSort();
     this._renderPointListConatiner();
-    this._renderPoints();
     this._initNewPoint();
+    this._renderPoints();
   }
 
   _renderPoint(container, point, data) {
-    const pointPresenter = new PointPresenter (container, this._onFavoriteChange, this._onCloseAllEdit);
+    const pointPresenter = new PointPresenter (container, this._newPointPresenter, this._onFavoriteChange, this._onCloseAllEdit);
     pointPresenter.init(point, data);
     this._renderingPointPresenters[point.id] = pointPresenter;
   }
@@ -62,6 +62,7 @@ export default class Trip {
     newEventBtn.addEventListener('click', () => {
       this._newPointPresenter.init();
       this._onSortPoints(SORT_TYPE.DAY);
+      this. _onCloseAllEdit();
     });
   }
 

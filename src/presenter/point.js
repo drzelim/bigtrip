@@ -1,4 +1,4 @@
-import {remove, render, RenderPosition, replace } from '../utils/render.js';
+import {remove, render, replace } from '../utils/render.js';
 import EditPointView from '../view/edit-point.js';
 import PointView from '../view/points.js';
 
@@ -8,10 +8,11 @@ const Mode = {
 };
 
 export default class Point {
-  constructor(container, onFavoriteChange, onCloseAllEdit) {
+  constructor(container, newPointPresenter, onFavoriteChange, onCloseAllEdit) {
     this._container = container;
     this._onFavoriteChange = onFavoriteChange;
     this._onCloseAllEdit = onCloseAllEdit;
+    this._newPointPresenter = newPointPresenter;
 
     this._point = {};
 
@@ -83,6 +84,7 @@ export default class Point {
 
   _replacePointToEdit() {
     this._onCloseAllEdit();
+    this._newPointPresenter.destroy();
     replace(this._editPointComponent, this._pointComponent);
     document.addEventListener('keydown', this._closeEditFormOnEsc);
     this._mode = Mode.EDITING;
