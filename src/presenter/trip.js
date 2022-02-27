@@ -11,9 +11,13 @@ import NewPointPresenter from './new-point.js';
 
 
 export default class Trip {
-  constructor(pageBody, points, offers) {
-    this._points = points;
-    this._offers = offers;
+  constructor(pageBody, pointsModel, offersModel) {
+    this._pointsModel = pointsModel;
+    this._offersModel = offersModel;
+
+    this._points = this._pointsModel.getPoints();
+    this._offers = this._offersModel.getOffers();
+
     this._pageBody = pageBody;
 
     this._sortedPoints = this._points;
@@ -48,6 +52,14 @@ export default class Trip {
     this._renderPointListConatiner();
     this._initNewPoint();
     this._renderPoints();
+  }
+
+  _getPoints() {
+    return this._pointsModel.getPoints();
+  }
+
+  _getOffers() {
+    return this._offersModel.getOffers();
   }
 
   _renderPoint(container, point, data) {
