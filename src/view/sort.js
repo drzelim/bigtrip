@@ -1,4 +1,4 @@
-import AbstractView from './abstarct.js';
+import Smart from './smart.js';
 
 
 const createSort = () => (
@@ -30,7 +30,7 @@ const createSort = () => (
   </form>`
 );
 
-export default class Sort extends AbstractView {
+export default class Sort extends Smart {
 
   constructor() {
     super();
@@ -40,6 +40,10 @@ export default class Sort extends AbstractView {
 
   getTemplate() {
     return createSort();
+  }
+
+  restoreHandlers() {
+    this.changeSortHandler(this._callback.sortHandler);
   }
 
   _onSortHandler(evt) {

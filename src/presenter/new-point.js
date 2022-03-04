@@ -4,10 +4,11 @@ import { nanoid } from 'nanoid';
 
 export default class NewPointPresenter {
 
-  constructor(container, offers, newEventBtn) {
+  constructor(container, offers, newEventBtn, sortComponent) {
     this._container = container;
     this._offers = offers;
     this._newEventBtn = newEventBtn;
+    this._sortComponent = sortComponent;
 
     this._newPointComponent = null;
 
@@ -40,6 +41,7 @@ export default class NewPointPresenter {
     render(this._container, this._newPointComponent, RenderPosition.AFTERBEGIN);
     document.addEventListener('keydown', this._closeNewFormOnEsc);
     this._setAllHandlers();
+    this._sortComponent.updateElement();
   }
 
   _setAllHandlers() {

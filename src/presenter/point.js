@@ -1,4 +1,6 @@
+import { UpdateType, UserAction } from '../utils/const.js';
 import {remove, render, replace } from '../utils/render.js';
+import EditPoint from '../view/edit-point.js';
 import EditPointView from '../view/edit-point.js';
 import PointView from '../view/points.js';
 
@@ -8,9 +10,9 @@ const Mode = {
 };
 
 export default class Point {
-  constructor(container, newPointPresenter, onFavoriteChange, onCloseAllEdit) {
+  constructor(container, newPointPresenter, onChangeData, onCloseAllEdit) {
     this._container = container;
-    this._onFavoriteChange = onFavoriteChange;
+    this._onChangeData = onChangeData;
     this._onCloseAllEdit = onCloseAllEdit;
     this._newPointPresenter = newPointPresenter;
 
@@ -64,9 +66,12 @@ export default class Point {
     editPointComponent.setFormCloseClickHandler(this._replaceEditToPoint);
 
     pointComponent.setFavoriteChangeHandler(() => {
-      this._onFavoriteChange(Object.assign({}, point, {
-        isFavorite: !point.isFavorite
-      }));
+      this._onChangeData(
+        UserAction.UPDATE_POINT,
+        UpdateType.PATCH,
+        Object.assign({}, point, {
+          isFavorite: !point.isFavorite
+        }));
     });
   }
 

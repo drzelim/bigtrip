@@ -170,6 +170,9 @@ export default class EditPoint extends Smart {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
+    this._point = EditPoint.parseDataToPoint(this._data);
+    console.log(this._point);
+    this.updateElement();
     this._callback.formSubmit();
   }
 
@@ -301,6 +304,8 @@ export default class EditPoint extends Smart {
 
     delete data.isType;
     delete data.isCity;
+
+    return data;
   }
 
   _setDatePicker() {

@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { FilterType } from './const';
 
 export const getOffers = (point, offers) => {
   const filterOffers = [];
@@ -39,3 +40,12 @@ export const sortByTime = (a, b) => {
   }
 };
 
+export const getFilteredPoints = (filterType, points) => {
+  switch(filterType) {
+    case FilterType.FUTURE:
+      return points.filter((point) => point.startTime >= new Date().toISOString());
+    case FilterType.PAST:
+      return points.filter((point) => point.endTime < new Date().toISOString());
+  }
+  return points;
+};
