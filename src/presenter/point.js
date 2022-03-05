@@ -28,6 +28,7 @@ export default class Point {
     this._replaceEditToPoint = this._replaceEditToPoint.bind(this);
     this._closeEditFormOnEsc = this._closeEditFormOnEsc.bind(this);
     this._closeNewFormOnEsc = this._closeNewFormOnEsc.bind(this);
+    this._pointDeleteHandler = this._pointDeleteHandler.bind(this);
   }
 
   init(point, data) {
@@ -64,13 +65,14 @@ export default class Point {
 
     editPointComponent.setFormSubmitHandler(this._formSubmitHandler);
     editPointComponent.setFormCloseClickHandler(this._replaceEditToPoint);
+    editPointComponent.setDeletePointHandler(this._pointDeleteHandler);
 
     pointComponent.setFavoriteChangeHandler(() => {
       this._onChangeData(
         UserAction.UPDATE_POINT,
         UpdateType.PATCH,
-        Object.assign({}, point, {
-          isFavorite: !point.isFavorite
+        Object.assign({}, this._point, {
+          isFavorite: !this._point.isFavorite
         }));
     });
   }
@@ -102,10 +104,25 @@ export default class Point {
     this._mode = Mode.DEFAULT;
   }
 
-  _formSubmitHandler() {
-    replace(this._pointComponent, this._editPointComponent);
+  _formSubmitHandler(point) {
+    this._onChangeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      Object.assign({}, point)
+    );
+
+    // replace(this._pointComponent, this._editPointComponent);
+
     document.removeEventListener('keydown', this._closeEditFormOnEsc);
     this._mode = Mode.DEFAULT;
+  }
+
+  _pointDeleteHandler() {
+    this._onChangeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MAJOR,
+      this._point
+    );
   }
 
   resetEditDefault() {

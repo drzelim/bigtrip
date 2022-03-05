@@ -1,14 +1,16 @@
 import {remove, render, RenderPosition} from '../utils/render.js';
 import NewPoint from '../view/new-point.js';
 import { nanoid } from 'nanoid';
+import { UpdateType, UserAction } from '../utils/const.js';
 
 export default class NewPointPresenter {
 
-  constructor(container, offers, newEventBtn, sortComponent) {
+  constructor(container, offers, newEventBtn, sortComponent, onChangeData) {
     this._container = container;
     this._offers = offers;
     this._newEventBtn = newEventBtn;
     this._sortComponent = sortComponent;
+    this._onChangeData = onChangeData;
 
     this._newPointComponent = null;
 
@@ -71,7 +73,12 @@ export default class NewPointPresenter {
     this.destroy();
   }
 
-  _submitNewPointFormHandler() {
+  _submitNewPointFormHandler(point) {
+    this._onChangeData(
+      UserAction.ADD_POINT,
+      UpdateType.MAJOR,
+      point
+    );
     this.destroy();
   }
 }

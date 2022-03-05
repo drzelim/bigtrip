@@ -107,10 +107,10 @@ const createNewPoint = (point, offers) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(point.startTime)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(point.startTime).toISOString()}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(point.endTime)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(point.endTime).toISOString()}">
         </div>
         <span id="event__time-error" class="visually-hidden" style="color: red; font-size: 14px">Дата начала события не может быть раньше даты окончания события</span>
 
@@ -182,7 +182,7 @@ export default class NewPoint extends Smart {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(EditPoint.parseDataToPoint(this._data));
   }
 
   setFormSubmitHandler(callback) {
@@ -281,9 +281,15 @@ export default class NewPoint extends Smart {
   }
 
   _startDateChangeHandler([startTime]) {
+    const time = this._datePickerEnd.selectedDates[0] - this._datePickerStart.selectedDates[0];
+
     this.updateData({
-      startTime,
+      startTime: startTime.toISOString(),
     });
+
+    if (time < 0) {
+      this.getElement().querySelector('#event__time-error').classList.remove('visually-hidden');
+    }
   }
 
   _endDateChangeHandler([endTime]) {
@@ -295,7 +301,7 @@ export default class NewPoint extends Smart {
     }
 
     this.updateData({
-      endTime,
+      endTime: endTime.toISOString(),
     });
   }
 }

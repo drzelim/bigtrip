@@ -29,7 +29,7 @@ export default class Filter extends Smart {
 
     this._filterModel = filterModel;
     this._pointsModel = pointsModel;
-    this._points = this._pointsModel.getPoints();
+    this._points = [];
 
     this._activeFilterType = FilterType.EVERYTHING;
 
@@ -38,6 +38,8 @@ export default class Filter extends Smart {
 
   getTemplate() {
     this._activeFilterType = this._filterModel.getFilter();
+    this._points = this._pointsModel.getPoints();
+    console.log(this._points)
     return createFilter(this._points, this._activeFilterType);
   }
 

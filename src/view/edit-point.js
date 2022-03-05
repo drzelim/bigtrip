@@ -2,7 +2,7 @@ import Smart from './smart.js';
 import { getOffers } from '../utils/common.js';
 import dayjs from 'dayjs';
 import { points } from '../main.js';
-import { descriptions, getDestination } from '../mock/random-point.js';
+import { descriptions, getDestination, getOffersId } from '../mock/random-point.js';
 import { getAllCities, getIsPointCity, getIsPointType, getOfferCheckbox, getPhotoFromDestinaitons, price } from '../utils/point.js';
 import flatpickr from 'flatpickr';
 
@@ -92,10 +92,10 @@ const createEditPoint = (point, offers) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(point.startTime)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(point.startTime).toISOString()}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(point.endTime)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(point.endTime).toISOString()}">
         </div>
         <span id="event__time-error" class="visually-hidden" style="color: red; font-size: 14px">Дата начала события не может быть раньше даты окончания события</span>
 
@@ -154,6 +154,7 @@ export default class EditPoint extends Smart {
     this._changeCityHandler = this._changeCityHandler.bind(this);
     this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
     this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
+    this._deletePointHandler = this._deletePointHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatePicker();
@@ -170,10 +171,12 @@ export default class EditPoint extends Smart {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._point = EditPoint.parseDataToPoint(this._data);
-    console.log(this._point);
-    this.updateElement();
-    this._callback.formSubmit();
+    this._callback.formSubmit(EditPoint.parseDataToPoint(this._data));
+  }
+
+  _deletePointHandler(evt) {
+    evt.preventDefault();
+    this._callback.deletePoint();
   }
 
   setFormSubmitHandler(callback) {
@@ -184,6 +187,11 @@ export default class EditPoint extends Smart {
   setFormCloseClickHandler(callback) {
     this._callback.onClickClose = callback;
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._formCloseClickHandler);
+  }
+
+  setDeletePointHandler(callback) {
+    this._callback.deletePoint = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._deletePointHandler);
   }
 
   _changeTypeHandler(evt) {
@@ -231,10 +239,11 @@ export default class EditPoint extends Smart {
   }
 
   restoreHandlers() {
-    this. _setInnerHandlers();
+    this._setInnerHandlers();
     this._setDatePicker();
     this.setFormCloseClickHandler(this._callback.onClickClose);
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setDeletePointHandler(this._callback.deletePoint);
   }
 
   static parsePointToData(point) {
@@ -302,6 +311,8 @@ export default class EditPoint extends Smart {
       }
     });
 
+    data.offers = getOffersId(data.type);
+
     delete data.isType;
     delete data.isCity;
 
@@ -343,9 +354,15 @@ export default class EditPoint extends Smart {
   }
 
   _startDateChangeHandler([startTime]) {
+    const time = this._datePickerEnd.selectedDates[0] - this._datePickerStart.selectedDates[0];
+
     this.updateData({
-      startTime,
+      startTime: startTime.toISOString(),
     });
+
+    if (time < 0) {
+      this.getElement().querySelector('#event__time-error').classList.remove('visually-hidden');
+    }
   }
 
   _endDateChangeHandler([endTime]) {
@@ -357,7 +374,7 @@ export default class EditPoint extends Smart {
     }
 
     this.updateData({
-      endTime,
+      endTime: endTime.toISOString(),
     });
   }
 }
