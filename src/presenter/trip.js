@@ -31,7 +31,7 @@ export default class Trip {
 
     this._pointListComponent = new PointListView();
     this._sortComponent = new SortView();
-    this._noPoints = new NoPoints();
+    this._noPoints = null;
     this._tripCostComponent = null;
     this._newPointPresenter = null;
 
@@ -70,6 +70,7 @@ export default class Trip {
   _getPoints() {
     this._currentFilterType = this._filterModel.getFilter();
     this._points = getFilteredPoints(this._currentFilterType, this._pointsModel.getPoints());
+
     switch(this._sortType) {
       case SORT_TYPE.PRICE:
         return this._points.slice().sort((a, b) => b.basePrice - a.basePrice);
@@ -109,6 +110,8 @@ export default class Trip {
   }
 
   _renderNoPoints() {
+    remove(this._sortComponent);
+    this._noPoints = new NoPoints(this._currentFilterType);
     render(this._pointsContainer, this._noPoints);
   }
 
@@ -169,6 +172,7 @@ export default class Trip {
     remove(this._tripInfoComponent);
     remove(this._tripCostComponent);
     remove(this._noPoints);
+    this._newPointPresenter.destroy();
 
     Object.values(this._renderingPointPresenters).
       forEach((presenter) => presenter.destroy());
@@ -186,15 +190,8 @@ export default class Trip {
   _onFilterPoints() {
     this._sortType = SORT_TYPE.DAY;
 
-    Object.values(this._renderingPointPresenters).
-      forEach((presenter) => presenter.destroy());
-
-    this._sortedPoints = this._getPoints();
-    this._renderTripCost();
-    remove(this._noPoints);
-    this._newPointPresenter.destroy();
-    this._sortComponent.updateElement();
-    this._renderPoints();
+    this._clearTrip({filter: true});
+    this.init();
   }
 
   _onSortPoints(sortType) {

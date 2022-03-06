@@ -1,6 +1,6 @@
 import { descriptions, getDestination } from '../mock/random-point';
 import Smart from './smart';
-import { getAllCities, getIsPointCity, getIsPointType, getOfferCheckbox, getPhotoFromDestinaitons, price } from '../utils/point.js';
+import { getAllCities, getIsPointCity, getIsPointType, getOfferCheckbox, getPhotoFromDestinaitons } from '../utils/point.js';
 import { getOffers } from '../utils/common.js';
 import { points } from '../main';
 import dayjs from 'dayjs';
@@ -119,7 +119,7 @@ const createNewPoint = (point, offers) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price(fullOffers)}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${point.basePrice}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -166,6 +166,7 @@ export default class NewPoint extends Smart {
     this._changeCityHandler = this._changeCityHandler.bind(this);
     this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
     this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
+    this._priceChangeHandler = this._priceChangeHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatePicker();
@@ -235,6 +236,15 @@ export default class NewPoint extends Smart {
       .addEventListener('change', this._changeTypeHandler);
   }
 
+  _priceChangeHandler(evt) {
+    this._callback.priceHandler(evt);
+  }
+
+  setPriceChangeHandler(callback) {
+    this._callback.priceHandler = callback;
+    this.getElement().querySelector('#event-price-1').addEventListener('input', this._priceChangeHandler);
+  }
+
   reset(data) {
     this.updateData(EditPoint.parsePointToData(data));
   }
@@ -244,6 +254,7 @@ export default class NewPoint extends Smart {
     this._setDatePicker();
     this.setFormCloseClickHandler(this._callback.onClickClose);
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setPriceChangeHandler(this._callback.priceHandler);
   }
 
   _setDatePicker() {
@@ -304,4 +315,5 @@ export default class NewPoint extends Smart {
       endTime: endTime.toISOString(),
     });
   }
+
 }

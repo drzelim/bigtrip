@@ -1,6 +1,6 @@
+import { offers } from '../mock/random-point.js';
 import { UpdateType, UserAction } from '../utils/const.js';
 import {remove, render, replace } from '../utils/render.js';
-import EditPoint from '../view/edit-point.js';
 import EditPointView from '../view/edit-point.js';
 import PointView from '../view/points.js';
 
@@ -17,6 +17,7 @@ export default class Point {
     this._newPointPresenter = newPointPresenter;
 
     this._point = {};
+    this._data = [];
 
     this._mode = Mode.DEFAULT;
     this._pointComponent = null;
@@ -29,6 +30,8 @@ export default class Point {
     this._closeEditFormOnEsc = this._closeEditFormOnEsc.bind(this);
     this._closeNewFormOnEsc = this._closeNewFormOnEsc.bind(this);
     this._pointDeleteHandler = this._pointDeleteHandler.bind(this);
+    this._priceHandler = this._priceHandler.bind(this);
+    this._offersChangeHandler = this._offersChangeHandler.bind(this);
   }
 
   init(point, data) {
@@ -66,6 +69,8 @@ export default class Point {
     editPointComponent.setFormSubmitHandler(this._formSubmitHandler);
     editPointComponent.setFormCloseClickHandler(this._replaceEditToPoint);
     editPointComponent.setDeletePointHandler(this._pointDeleteHandler);
+    editPointComponent.setPriceChangeHandler(this._priceHandler);
+    editPointComponent.setOffersCheckboxChangeHandler(this._offersChangeHandler);
 
     pointComponent.setFavoriteChangeHandler(() => {
       this._onChangeData(
@@ -111,8 +116,6 @@ export default class Point {
       Object.assign({}, point)
     );
 
-    // replace(this._pointComponent, this._editPointComponent);
-
     document.removeEventListener('keydown', this._closeEditFormOnEsc);
     this._mode = Mode.DEFAULT;
   }
@@ -123,6 +126,15 @@ export default class Point {
       UpdateType.MAJOR,
       this._point
     );
+  }
+
+  _priceHandler(evt) {
+    this._editPointComponent.updateData({basePrice: parseInt(evt.target.value, 10)}, true);
+  }
+
+  _offersChangeHandler(evt) {
+    const offer = this._data.filter((item) => item.id === +evt.target.dataset.id);
+    this._editPointComponent.updateData({offers: offer}, true);
   }
 
   resetEditDefault() {

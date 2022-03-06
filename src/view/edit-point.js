@@ -3,7 +3,7 @@ import { getOffers } from '../utils/common.js';
 import dayjs from 'dayjs';
 import { points } from '../main.js';
 import { descriptions, getDestination, getOffersId } from '../mock/random-point.js';
-import { getAllCities, getIsPointCity, getIsPointType, getOfferCheckbox, getPhotoFromDestinaitons, price } from '../utils/point.js';
+import { getAllCities, getIsPointCity, getIsPointType, getOfferCheckbox, getPhotoFromDestinaitons } from '../utils/point.js';
 import flatpickr from 'flatpickr';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
@@ -104,7 +104,7 @@ const createEditPoint = (point, offers) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price(fullOffers)}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${point.basePrice}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -117,7 +117,7 @@ const createEditPoint = (point, offers) => {
         <section class="event__section  event__section--offers ${fullOffers.length === 0 ? 'visually-hidden' : ''}">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-          <div class="event__available-offers ">
+          <div class="event__available-offers">
             ${getOfferCheckbox(fullOffers).join('\n')}
           </div>
         </section>
@@ -155,6 +155,8 @@ export default class EditPoint extends Smart {
     this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
     this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
     this._deletePointHandler = this._deletePointHandler.bind(this);
+    this._priceChangeHandler = this._priceChangeHandler.bind(this);
+    this._offersCheckboxCangeHandler = this._offersCheckboxCangeHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatePicker();
@@ -234,6 +236,24 @@ export default class EditPoint extends Smart {
       .addEventListener('change', this._changeTypeHandler);
   }
 
+  _priceChangeHandler(evt) {
+    this._callback.priceHandler(evt);
+  }
+
+  setPriceChangeHandler(callback) {
+    this._callback.priceHandler = callback;
+    this.getElement().querySelector('#event-price-1').addEventListener('input', this._priceChangeHandler);
+  }
+
+  _offersCheckboxCangeHandler(evt) {
+    this._callback.checkboxChangeHandler(evt);
+  }
+
+  setOffersCheckboxChangeHandler(callback) {
+    this._callback.checkboxChangeHandler = callback;
+    this.getElement().querySelector('.event__available-offers').addEventListener('change', this._offersCheckboxCangeHandler);
+  }
+
   reset(data) {
     this.updateData(EditPoint.parsePointToData(data));
   }
@@ -244,6 +264,8 @@ export default class EditPoint extends Smart {
     this.setFormCloseClickHandler(this._callback.onClickClose);
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setDeletePointHandler(this._callback.deletePoint);
+    this.setPriceChangeHandler(this._callback.priceHandler);
+    this.setOffersCheckboxChangeHandler(this._callback.checkboxChangeHandler);
   }
 
   static parsePointToData(point) {

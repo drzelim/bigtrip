@@ -14,8 +14,8 @@ export const getOfferCheckbox = (offers) => {
   offers.forEach((offer) => (
     arr.push (
       `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}" type="checkbox" name="event-offer-${offer.id}">
-        <label class="event__offer-label" for="event-offer-${offer.id}">
+        <input class="event__offer-checkbox  visually-hidden" data-id="${offer.id}" id="event-offer-${offer.id}" type="checkbox" name="event-offer-${offer.id}">
+        <label class="event__offer-label" for="event-offer-${offer.id}" >
           <span class="event__offer-title">${offer.text}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>

@@ -39,7 +39,6 @@ export default class Filter extends Smart {
   getTemplate() {
     this._activeFilterType = this._filterModel.getFilter();
     this._points = this._pointsModel.getPoints();
-    console.log(this._points)
     return createFilter(this._points, this._activeFilterType);
   }
 

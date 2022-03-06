@@ -12,11 +12,13 @@ export default class NewPointPresenter {
     this._sortComponent = sortComponent;
     this._onChangeData = onChangeData;
 
+    this._newPoint = {};
     this._newPointComponent = null;
 
     this._closeNewFormOnEsc = this._closeNewFormOnEsc.bind(this);
     this._removeNewPointHandler = this._removeNewPointHandler.bind(this);
     this._submitNewPointFormHandler = this._submitNewPointFormHandler.bind(this);
+    this._priceHandler = this._priceHandler.bind(this);
   }
 
   init() {
@@ -24,7 +26,11 @@ export default class NewPointPresenter {
   }
 
   _setNewEventBtnClickHandler() {
-    const newPoint = {
+    if (this._newPointComponent) {
+      return;
+    }
+
+    this._newPoint = {
       id: nanoid (10),
       basePrice: 0,
       type: '',
@@ -39,7 +45,7 @@ export default class NewPointPresenter {
     };
 
     this._newEventBtn.setAttribute('disabled', true);
-    this._newPointComponent = new NewPoint(newPoint, this._offers);
+    this._newPointComponent = new NewPoint(this._newPoint, this._offers);
     render(this._container, this._newPointComponent, RenderPosition.AFTERBEGIN);
     document.addEventListener('keydown', this._closeNewFormOnEsc);
     this._setAllHandlers();
@@ -49,6 +55,7 @@ export default class NewPointPresenter {
   _setAllHandlers() {
     this._newPointComponent.setFormCloseClickHandler(this._removeNewPointHandler);
     this._newPointComponent.setFormSubmitHandler(this._submitNewPointFormHandler);
+    this._newPointComponent.setPriceChangeHandler(this._priceHandler);
   }
 
   _closeNewFormOnEsc(evt) {
@@ -59,6 +66,10 @@ export default class NewPointPresenter {
     if(evt.key === 'Enter') {
       evt.preventDefault();
     }
+  }
+
+  _priceHandler(evt) {
+    this._newPointComponent.updateData({basePrice: parseInt(evt.target.value, 10)}, true);
   }
 
   destroy() {

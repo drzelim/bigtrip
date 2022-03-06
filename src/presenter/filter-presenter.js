@@ -37,18 +37,21 @@ export default class FilterPresenter {
           if (this._filterModel.getFilter() === FilterType.FUTURE) {
             return;
           }
+          this._activeFilter = FilterType.FUTURE;
           this._filterModel.setFilter(UpdateType.MINOR, FilterType.FUTURE);
           break;
         case FilterType.PAST:
           if (this._filterModel.getFilter() === FilterType.PAST) {
             return;
           }
+          this._activeFilter = FilterType.PAST;
           this._filterModel.setFilter(UpdateType.MINOR, FilterType.PAST);
           break;
         case FilterType.EVERYTHING:
           if (this._filterModel.getFilter() === FilterType.EVERYTHING) {
             return;
           }
+          this._activeFilter = FilterType.EVERYTHING;
           this._filterModel.setFilter(UpdateType.MINOR, FilterType.EVERYTHING);
           break;
       }
