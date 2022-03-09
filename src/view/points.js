@@ -3,20 +3,16 @@ import duration from 'dayjs/plugin/duration';
 import AbstractView from './abstarct';
 dayjs.extend(duration);
 
-const getOffersInfo = (point, offers) => {
+const getOffersInfo = (point) => {
   const arr = [];
-  point.offers.forEach((item) => {
-    offers.forEach((i) => {
-      if (item === i.id) {
-        arr.push(
-          `<li class="event__offer">
-            <span class="event__offer-title">${i.text}</span>
-            &plus;&euro;&nbsp;
-            <span class="event__offer-price">${i.price}</span>
-          </li>`
-        );
-      }
-    });
+  point.offers.forEach((i) => {
+    arr.push(
+      `<li class="event__offer">
+        <span class="event__offer-title">${i.text}</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">${i.price}</span>
+      </li>`
+    );
   });
   return arr;
 };
@@ -34,7 +30,7 @@ const getEventDuration = (dateFrom, dateTo) => {
   }
 };
 
-const createPoint = (point, offers) => {
+const createPoint = (point) => {
   const date = dayjs(point.startTime).format('MMM D');
   return (
     `<li class="trip-events__item">
@@ -57,7 +53,7 @@ const createPoint = (point, offers) => {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${getOffersInfo(point, offers).join(' ')}
+          ${getOffersInfo(point).join(' ')}
         </ul>
         <button class="event__favorite-btn ${point.isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
           <span class="visually-hidden">Add to favorite</span>
@@ -85,7 +81,7 @@ export default class Point extends AbstractView {
   }
 
   getTemplate() {
-    return createPoint(this._point, this._offers);
+    return createPoint(this._point);
   }
 
   _pointClickHandler(evt) {

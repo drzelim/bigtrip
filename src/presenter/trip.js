@@ -5,8 +5,8 @@ import SortView from '../view/sort.js';
 import PointListView from '../view/point-list';
 import NoPoints from '../view/no-points.js';
 import PointPresenter from './point.js';
-import { getFilteredPoints, sortByTime, updateItem } from '../utils/common.js';
-import { FilterType, SORT_TYPE, UpdateType, UserAction } from '../utils/const.js';
+import { getFilteredPoints, sortByTime } from '../utils/common.js';
+import { SORT_TYPE, UpdateType, UserAction } from '../utils/const.js';
 import NewPointPresenter from './new-point.js';
 
 

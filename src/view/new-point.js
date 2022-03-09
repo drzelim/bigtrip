@@ -1,6 +1,6 @@
 import { descriptions, getDestination } from '../mock/random-point';
 import Smart from './smart';
-import { getAllCities, getIsPointCity, getIsPointType, getOfferCheckbox, getPhotoFromDestinaitons } from '../utils/point.js';
+import { getAllCities, getIsPointCity, getIsPointType, getPhotoFromDestinaitons } from '../utils/point.js';
 import { getOffers } from '../utils/common.js';
 import { points } from '../main';
 import dayjs from 'dayjs';
@@ -9,19 +9,33 @@ import flatpickr from 'flatpickr';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
-// const getDesciption = (city, info) => {
-//   if (!city) {
-//     return [{description: ''}];
-//   }
-//   return info.filter((item) => item.name === city);
-// };
 
-// const getPhoto = (desc) => {
-//   if (!desc.photo) {
-//     return [];
-//   }
-//   return desc.photo.map((item) => `<img class="event__photo" src="${item.src}" alt="${item.description}">`);
-// } ;
+const getCheckedIsOffers = (text, isOffers) => {
+  let isOffer = '';
+  isOffers.forEach((item) => {
+    if (text === item) {
+      isOffer = 'checked';
+    }
+  });
+  return isOffer;
+};
+
+const getOfferCheckbox = (offers, isOffers) => {
+  const arr = [];
+  offers.forEach((offer) => (
+    arr.push (
+      `<div class="event__offer-selector">
+        <input class="event__offer-checkbox visually-hidden" data-name="${offer.text}" id="event-offer-${offer.id}" type="checkbox" name="event-offer-${offer.id}" ${getCheckedIsOffers(offer.text, isOffers)}>
+        <label class="event__offer-label" for="event-offer-${offer.id}" >
+          <span class="event__offer-title">${offer.text}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${offer.price}</span>
+        </label>
+      </div>`
+    ))
+  );
+  return arr;
+};
 
 const createNewPoint = (point, offers) => {
   const fullOffers = getOffers(point, offers);
@@ -130,7 +144,7 @@ const createNewPoint = (point, offers) => {
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers ">
-            ${getOfferCheckbox(fullOffers).join('\n')}
+            ${getOfferCheckbox(fullOffers, point.isOffers).join('\n')}
           </div>
         </section>
 
@@ -167,6 +181,7 @@ export default class NewPoint extends Smart {
     this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
     this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
+    this._offersCheckboxCangeHandler = this._offersCheckboxCangeHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatePicker();
@@ -183,7 +198,7 @@ export default class NewPoint extends Smart {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(EditPoint.parseDataToPoint(this._data));
+    this._callback.formSubmit(EditPoint.parseDataToPoint(this._data, this._offers));
   }
 
   setFormSubmitHandler(callback) {
@@ -234,6 +249,10 @@ export default class NewPoint extends Smart {
     this.getElement()
       .querySelector('.event__type-list')
       .addEventListener('change', this._changeTypeHandler);
+
+    this.getElement()
+      .querySelector('.event__available-offers')
+      .addEventListener('change', this._offersCheckboxCangeHandler);
   }
 
   _priceChangeHandler(evt) {
@@ -243,6 +262,21 @@ export default class NewPoint extends Smart {
   setPriceChangeHandler(callback) {
     this._callback.priceHandler = callback;
     this.getElement().querySelector('#event-price-1').addEventListener('input', this._priceChangeHandler);
+  }
+
+  _offersCheckboxCangeHandler(evt) {
+    if (this._data.isOffers.includes(evt.target.dataset.name)) {
+      this._data.isOffers.forEach((item, index) => {
+        if (item === evt.target.dataset.name) {
+          this._data.isOffers = [
+            ...this._data.isOffers.slice(0, index),
+            ...this._data.isOffers.slice(index + 1)
+          ];
+        }
+      });
+      return;
+    }
+    this._data.isOffers.push(evt.target.dataset.name);
   }
 
   reset(data) {

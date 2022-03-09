@@ -18,7 +18,7 @@ const filterModel = new FilterModel();
 
 pointsModel.setPoints(points);
 offersModel.setOffers(offers);
-console.log(points);
+// console.log(points);
 
 const navContainer = pageBody.querySelector('.trip-controls__navigation');
 render(navContainer, new SiteMenuView());

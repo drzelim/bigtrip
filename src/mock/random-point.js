@@ -32,13 +32,13 @@ export const offers = [
   {id: 5, text: 'Add breakfast', price: 50, type: getRandomArrayElement(pointType)},
   {id: 6, text: 'Lunch in city', price: 30, type: getRandomArrayElement(pointType)},
   {id: 7, text: 'Book tickets', price: 40, type: getRandomArrayElement(pointType)},
-  {id: 8, text: 'Order Uber', price: 20, type: getRandomArrayElement(pointType)},
-  {id: 9, text: 'Add luggage', price: 50, type: getRandomArrayElement(pointType)},
-  {id: 10, text: 'Switch to comfort', price: 80, type: getRandomArrayElement(pointType)},
-  {id: 11, text: 'Rent a car', price: 200, type: getRandomArrayElement(pointType)},
-  {id: 12, text: 'Add breakfast', price: 50, type: getRandomArrayElement(pointType)},
-  {id: 13, text: 'Lunch in city', price: 30, type: getRandomArrayElement(pointType)},
-  {id: 14, text: 'Book tickets', price: 40, type: getRandomArrayElement(pointType)},
+  // {id: 8, text: 'Order Uber', price: 20, type: getRandomArrayElement(pointType)},
+  // {id: 9, text: 'Add luggage', price: 50, type: getRandomArrayElement(pointType)},
+  // {id: 10, text: 'Switch to comfort', price: 80, type: getRandomArrayElement(pointType)},
+  // {id: 11, text: 'Rent a car', price: 200, type: getRandomArrayElement(pointType)},
+  // {id: 12, text: 'Add breakfast', price: 50, type: getRandomArrayElement(pointType)},
+  // {id: 13, text: 'Lunch in city', price: 30, type: getRandomArrayElement(pointType)},
+  // {id: 14, text: 'Book tickets', price: 40, type: getRandomArrayElement(pointType)},
 ];
 
 export const descriptions = [
@@ -193,7 +193,7 @@ const getRandomPoint = () => {
     basePrice: getRandomInt(5, 20) * 10,
     type: randomType,
     city: randomCity,
-    offers: getOffersId(randomType),
+    offers: [getRandomArrayElement(offers)],
     place: {
       description: randomDescription.map((item) => item.description),
       photos: randomDescription.map((item) => item.photo).flat()

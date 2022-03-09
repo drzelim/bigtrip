@@ -11,17 +11,7 @@ export default class Smart extends Abstract {
       return;
     }
 
-    console.log(update);
-
-    // ЗАВЕРШИТЬ ЛОГИКУ ОБНОВЛЕНИЯ БЛОКА "OFFERS"
-    // ЗАВЕРШИТЬ ЛОГИКУ ОБНОВЛЕНИЯ БЛОКА "OFFERS"
-    // ЗАВЕРШИТЬ ЛОГИКУ ОБНОВЛЕНИЯ БЛОКА "OFFERS"
-    // ЗАВЕРШИТЬ ЛОГИКУ ОБНОВЛЕНИЯ БЛОКА "OFFERS"
-    // ЗАВЕРШИТЬ ЛОГИКУ ОБНОВЛЕНИЯ БЛОКА "OFFERS"
-
     this._data = Object.assign({}, this._data, update);
-
-    console.log(this._data);
 
     if (flag) {
       return;

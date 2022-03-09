@@ -1,6 +1,8 @@
 import Abstract from './abstarct';
 
-const totalPrice = (points) => points.reduce((acc, point) => (acc += point.basePrice), 0);
+const totalOffersPrice = (point) => point.offers.reduce((acc, item) => (acc += item.price), 0);
+
+const totalPrice = (points) => points.reduce((acc, point) => (acc += point.basePrice + totalOffersPrice(point)), 0);
 
 const createTripCost = (points) => (
   `<p class="trip-info__cost">

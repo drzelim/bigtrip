@@ -9,22 +9,15 @@ export const price = (offers) => {
   return sumPrice;
 };
 
-export const getOfferCheckbox = (offers) => {
-  const arr = [];
-  offers.forEach((offer) => (
-    arr.push (
-      `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" data-id="${offer.id}" id="event-offer-${offer.id}" type="checkbox" name="event-offer-${offer.id}">
-        <label class="event__offer-label" for="event-offer-${offer.id}" >
-          <span class="event__offer-title">${offer.text}</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">${offer.price}</span>
-        </label>
-      </div>`
-    ))
-  );
-  return arr;
-};
+// const getCheckedOffers = (text, isOffers) => {
+//   let isOffer = '';
+//   isOffers.forEach((item) => {
+//     if (text === item) {
+//       isOffer = 'checked';
+//     }
+//   });
+//   return isOffer;
+// };
 
 export const getPhoto = (point) => point.place.photos.map((photo) => `<img class="event__photo" src="${photo.src}" alt="Event photo">`);
 

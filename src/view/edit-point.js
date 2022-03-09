@@ -2,14 +2,55 @@ import Smart from './smart.js';
 import { getOffers } from '../utils/common.js';
 import dayjs from 'dayjs';
 import { points } from '../main.js';
-import { descriptions, getDestination, getOffersId } from '../mock/random-point.js';
-import { getAllCities, getIsPointCity, getIsPointType, getOfferCheckbox, getPhotoFromDestinaitons } from '../utils/point.js';
+import { descriptions, getDestination } from '../mock/random-point.js';
+import { getAllCities, getIsPointCity, getIsPointType, getPhotoFromDestinaitons } from '../utils/point.js';
 import flatpickr from 'flatpickr';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
+const getCheckedOffers = (offers, isOffers) => {
+  const data = [];
+  offers.forEach((item) => {
+    isOffers.forEach((i) => {
+      if (item.text === i) {
+        const offer = {};
+        offer.text = item.text;
+        offer.price = item.price;
+        data.push(offer);
+      }
+    });
+  });
+  return data;
+};
+
+const getCheckedIsOffers = (text, isOffers) => {
+  let isOffer = '';
+  isOffers.forEach((item) => {
+    if (text === item) {
+      isOffer = 'checked';
+    }
+  });
+  return isOffer;
+};
+
+const getOfferCheckbox = (offers, isOffers) => {
+  const arr = [];
+  offers.forEach((offer) => (
+    arr.push (
+      `<div class="event__offer-selector">
+        <input class="event__offer-checkbox visually-hidden" data-name="${offer.text}" id="event-offer-${offer.id}" type="checkbox" name="event-offer-${offer.id}" ${getCheckedIsOffers(offer.text, isOffers)}>
+        <label class="event__offer-label" for="event-offer-${offer.id}" >
+          <span class="event__offer-title">${offer.text}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${offer.price}</span>
+        </label>
+      </div>`
+    ))
+  );
+  return arr;
+};
+
 const createEditPoint = (point, offers) => {
-  const fullOffers = getOffers(point, offers);
   const city = getIsPointCity(point).join('');
   const type = getIsPointType(point).join('');
   const description = getDestination(city, descriptions);
@@ -114,11 +155,11 @@ const createEditPoint = (point, offers) => {
         </button>
       </header>
       <section class="event__details">
-        <section class="event__section  event__section--offers ${fullOffers.length === 0 ? 'visually-hidden' : ''}">
+        <section class="event__section  event__section--offers ${offers.length === 0 ? 'visually-hidden' : ''}">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
-            ${getOfferCheckbox(fullOffers).join('\n')}
+            ${getOfferCheckbox(offers, point.isOffers).join('\n')}
           </div>
         </section>
 
@@ -142,8 +183,10 @@ export default class EditPoint extends Smart {
     super();
 
     this._point = point;
-    this._data = EditPoint.parsePointToData(point);
     this._offers = offers;
+    this._pointOffers = [];
+
+    this._data = EditPoint.parsePointToData(point);
 
     this._datePickerStart = null;
     this._datePickerEnd = null;
@@ -163,7 +206,8 @@ export default class EditPoint extends Smart {
   }
 
   getTemplate() {
-    return createEditPoint(this._data, this._offers);
+    this._pointOffers = getOffers(this._data, this._offers);
+    return createEditPoint(this._data, this._pointOffers);
   }
 
   _formCloseClickHandler(evt) {
@@ -173,7 +217,7 @@ export default class EditPoint extends Smart {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(EditPoint.parseDataToPoint(this._data));
+    this._callback.formSubmit(EditPoint.parseDataToPoint(this._data, this._offers));
   }
 
   _deletePointHandler(evt) {
@@ -202,6 +246,7 @@ export default class EditPoint extends Smart {
       Object.keys(this._data.isType).forEach((key) => {
         if (key.toLowerCase() === evt.target.value) {
           isType[key] = true;
+          this._data.isOffers = [];
         } else {
           isType[key] = false;
         }
@@ -234,6 +279,10 @@ export default class EditPoint extends Smart {
     this.getElement()
       .querySelector('.event__type-list')
       .addEventListener('change', this._changeTypeHandler);
+
+    this.getElement()
+      .querySelector('.event__available-offers')
+      .addEventListener('change', this._offersCheckboxCangeHandler);
   }
 
   _priceChangeHandler(evt) {
@@ -246,7 +295,18 @@ export default class EditPoint extends Smart {
   }
 
   _offersCheckboxCangeHandler(evt) {
-    this._callback.checkboxChangeHandler(evt);
+    if (this._data.isOffers.includes(evt.target.dataset.name)) {
+      this._data.isOffers.forEach((item, index) => {
+        if (item === evt.target.dataset.name) {
+          this._data.isOffers = [
+            ...this._data.isOffers.slice(0, index),
+            ...this._data.isOffers.slice(index + 1)
+          ];
+        }
+      });
+      return;
+    }
+    this._data.isOffers.push(evt.target.dataset.name);
   }
 
   setOffersCheckboxChangeHandler(callback) {
@@ -308,17 +368,21 @@ export default class EditPoint extends Smart {
       }
     });
 
+    const off = point.offers.map((item) => item.text);
+    const isOffers = [...new Set(off)];
+
     return Object.assign(
       {},
       point,
       {
         isType: TYPE,
-        isCity: CITIES
+        isCity: CITIES,
+        isOffers
       }
     );
   }
 
-  static parseDataToPoint(data) {
+  static parseDataToPoint(data, offers) {
     data = Object.assign({}, data);
 
     Object.keys(data.isType).forEach((key) => {
@@ -333,10 +397,11 @@ export default class EditPoint extends Smart {
       }
     });
 
-    data.offers = getOffersId(data.type);
+    data.offers = getCheckedOffers(offers, data.isOffers);
 
     delete data.isType;
     delete data.isCity;
+    delete data.isOffers;
 
     return data;
   }
