@@ -6,6 +6,8 @@ import PointsModel from './model/points-model.js';
 import OffersModel from './model/offers-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import FilterModel from './model/filter-model.js';
+import Statistics from './view/statistics.js';
+import { MenuItem } from './utils/const.js';
 
 
 const POINT_COUNT = 20;
@@ -20,12 +22,31 @@ pointsModel.setPoints(points);
 offersModel.setOffers(offers);
 // console.log(points);
 
-const navContainer = pageBody.querySelector('.trip-controls__navigation');
-render(navContainer, new SiteMenuView());
-
 const filterContainer = pageBody.querySelector('.trip-controls__filters');
 const filterPresenter = new FilterPresenter(filterContainer, filterModel, pointsModel);
-filterPresenter.init();
-
 const tripPresenter = new TripPresenter(pageBody, pointsModel, offersModel, filterModel, filterPresenter);
+
+const navContainer = pageBody.querySelector('.trip-controls__navigation');
+const siteMenuComponent = new SiteMenuView();
+const statisticsComponent = new Statistics();
+
+const handleMenuChange = (menuItem) => {
+  switch(menuItem) {
+    case MenuItem.TABLE:
+      statisticsComponent.hide();
+      tripPresenter.show();
+      break;
+    case MenuItem.STATS:
+      statisticsComponent.show();
+      tripPresenter.hide();
+      break;
+  }
+};
+
+siteMenuComponent.setMenuChangeHandler(handleMenuChange);
+
+render(navContainer, siteMenuComponent);
+render(pageBody, statisticsComponent);
+
+filterPresenter.init();
 tripPresenter.init();

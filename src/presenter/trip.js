@@ -208,4 +208,16 @@ export default class Trip {
 
     this._renderPoints();
   }
+
+  show() {
+    if (this._pointListComponent.getElement().classList.contains('visually-hidden')) {
+      this._pointListComponent.getElement().classList.remove('visually-hidden');
+    }
+  }
+
+  hide() {
+    if (!this._pointListComponent.getElement().classList.contains('visually-hidden')) {
+      this._pointListComponent.getElement().classList.add('visually-hidden');
+    }
+  }
 }

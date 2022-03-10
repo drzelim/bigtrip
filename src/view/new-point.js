@@ -152,7 +152,7 @@ const createNewPoint = (point, offers) => {
           <h3 class="event__section-title  event__section-title--destination ${description.length === 0 ? 'visually-hidden' : ''}">Destination</h3>
           <p class="event__destination-description">${description.length !== 0 ? description[0].description : ''}</p>
 
-          <div class="event__photos-container">
+          <div class="event__photos-container ${description.length === 0 ? 'visually-hidden' : ''}">
             <div class="event__photos-tape">
               ${getPhotoFromDestinaitons(descriptions, city).join('\n')}
             </div>

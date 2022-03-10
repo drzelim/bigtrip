@@ -25,4 +25,17 @@ export default class Abstract {
     this._element = null;
   }
 
+  show() {
+    console.log(this.getElement());
+
+    if (this.getElement().classList.contains('visually-hidden')) {
+      this.getElement().classList.remove('visually-hidden');
+    }
+  }
+
+  hide() {
+    if (!this.getElement().classList.contains('visually-hidden')) {
+      this.getElement().classList.add('visually-hidden');
+    }
+  }
 }
