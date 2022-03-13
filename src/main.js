@@ -1,13 +1,13 @@
 import { getRandomPoints, offers } from './mock/random-point.js';
-import TripPresenter from './presenter/trip.js';
-import SiteMenuView from './view/menu.js';
-import { render } from './utils/render.js';
-import PointsModel from './model/points-model.js';
-import OffersModel from './model/offers-model.js';
-import FilterPresenter from './presenter/filter-presenter.js';
 import FilterModel from './model/filter-model.js';
-import Statistics from './view/statistics.js';
+import OffersModel from './model/offers-model.js';
+import PointsModel from './model/points-model.js';
+import FilterPresenter from './presenter/filter-presenter.js';
+import TripPresenter from './presenter/trip.js';
 import { MenuItem } from './utils/const.js';
+import { remove, render } from './utils/render.js';
+import SiteMenuView from './view/menu.js';
+import Statistics from './view/statistics.js';
 
 
 const POINT_COUNT = 20;
@@ -28,17 +28,20 @@ const tripPresenter = new TripPresenter(pageBody, pointsModel, offersModel, filt
 
 const navContainer = pageBody.querySelector('.trip-controls__navigation');
 const siteMenuComponent = new SiteMenuView();
-const statisticsComponent = new Statistics();
+let statisticsComponent = null;
 
 const handleMenuChange = (menuItem) => {
   switch(menuItem) {
     case MenuItem.TABLE:
-      statisticsComponent.hide();
-      tripPresenter.show();
+      tripPresenter.init();
+      remove(statisticsComponent);
+      siteMenuComponent.updateElement();
       break;
     case MenuItem.STATS:
-      statisticsComponent.show();
-      tripPresenter.hide();
+      tripPresenter.destroy();
+      statisticsComponent = new Statistics(pointsModel);
+      render(pageBody, statisticsComponent);
+      siteMenuComponent.updateElement();
       break;
   }
 };
@@ -46,7 +49,6 @@ const handleMenuChange = (menuItem) => {
 siteMenuComponent.setMenuChangeHandler(handleMenuChange);
 
 render(navContainer, siteMenuComponent);
-render(pageBody, statisticsComponent);
 
 filterPresenter.init();
 tripPresenter.init();

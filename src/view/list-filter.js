@@ -3,7 +3,7 @@ import { FilterType } from '../utils/const.js';
 import Smart from './smart.js';
 
 const createFilter = (points, type) => (
-  `<form class="trip-filters" action="#" method="get">
+  `<form class="trip-filters" action="#" method="get" disabled>
     <div class="trip-filters__filter">
       <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" ${type === FilterType.EVERYTHING ? 'checked' : ''}>
       <label class="trip-filters__filter-label" for="filter-everything" data-name="everything">Everything<span> ${points.length}</span></label>
@@ -54,5 +54,10 @@ export default class Filter extends Smart {
 
   restoreHandlers() {
     this.setChangeFilterHandler(this._callback.filterHandler);
+  }
+
+  filterDisabled() {
+    this.getElement().removeEventListener('click', this._changeFilterHandler);
+    this.getElement().querySelectorAll('input').forEach((item) => item.setAttribute('disabled', true));
   }
 }

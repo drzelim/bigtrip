@@ -9,5 +9,4 @@ export default class PointList extends AbstractView {
   getTemplate() {
     return createPointsContainer();
   }
-
 }

@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import { getEventDuration } from '../utils/common';
 import AbstractView from './abstarct';
 dayjs.extend(duration);
 
@@ -17,18 +18,6 @@ const getOffersInfo = (point) => {
   return arr;
 };
 
-const getEventDuration = (dateFrom, dateTo) => {
-  const to = dayjs(dateTo);
-  const from = dayjs(dateFrom);
-  const date = to.diff(from, 'minute');
-  if (date < 60) {
-    return `${dayjs.duration(date, 'minute').format('mm')}M`;
-  } else if (date >= 60 && date < 60 * 24) {
-    return `${dayjs.duration(date, 'minute').format('HH')}H ${dayjs.duration(date, 'minute').format('mm')}M`;
-  } else if (date >=  60 * 24) {
-    return `${dayjs.duration(date, 'minute').format('DD')}D ${dayjs.duration(date, 'minute').format('HH')}H ${dayjs.duration(date,  'minute').format('mm')}M`;
-  }
-};
 
 const createPoint = (point) => {
   const date = dayjs(point.startTime).format('MMM D');

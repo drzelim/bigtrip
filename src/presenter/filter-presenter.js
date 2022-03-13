@@ -1,5 +1,5 @@
 import { FilterType, UpdateType } from '../utils/const';
-import { render } from '../utils/render';
+import { remove, render } from '../utils/render';
 import FilterView from '../view/list-filter.js';
 
 export default class FilterPresenter {
@@ -60,5 +60,15 @@ export default class FilterPresenter {
 
   _handleModelEvent() {
     this._filterComponent.updateElement();
+  }
+
+  removeFilterComponent() {
+    remove(this._filterComponent);
+    this._filterComponent = null;
+  }
+
+  filterDisabled() {
+    this._filterModel.setFilter(UpdateType.MINOR, FilterType.EVERYTHING);
+    this._filterComponent.filterDisabled();
   }
 }

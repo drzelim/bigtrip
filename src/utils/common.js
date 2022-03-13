@@ -49,3 +49,30 @@ export const getFilteredPoints = (filterType, points) => {
   }
   return points;
 };
+
+const TimeDuration = {
+  SECOND: 1000,
+  MINUTE: 60 * 1000,
+  HOUR: 60 * 60 * 1000,
+  DAY: 24 * 60 * 60 * 1000,
+  MONTH: 30 * 24 * 60 * 60 * 1000
+};
+
+export const getEventDuration = (dateFrom, dateTo, data = 0) => {
+  let date = data;
+  if (dateFrom && dateTo) {
+    const to = dayjs(dateTo);
+    const from = dayjs(dateFrom);
+    date = to.diff(from);
+  }
+
+  if (date < TimeDuration.HOUR) {
+    return `${dayjs.duration(date).format('mm')}M`;
+  } else if (date >= TimeDuration.HOUR && date < TimeDuration.DAY) {
+    return `${dayjs.duration(date).format('HH')}H ${dayjs.duration(date).format('mm')}M`;
+  } else if (date >=  TimeDuration.DAY && date < TimeDuration.MONTH) {
+    return `${dayjs.duration(date).format('DD')}D ${dayjs.duration(date).format('HH')}H ${dayjs.duration(date).format('mm')}M`;
+  } else if (date >= TimeDuration.MONTH) {
+    return `${dayjs.duration(date).format('M')}M ${dayjs.duration(date).format('DD')}D ${dayjs.duration(date).format('HH')}H ${dayjs.duration(date).format('mm')}M`;
+  }
+};

@@ -20,6 +20,7 @@ export default class Trip {
     this._points = this._pointsModel.getPoints();
     this._offers = this._offersModel.getOffers();
     this._pageBody = pageBody;
+    this._tripMainContainer = this._pageBody.querySelector('.trip-main');
 
     this._sortedPoints = [];
     this._sortType = SORT_TYPE.DAY;
@@ -32,12 +33,12 @@ export default class Trip {
     this._pointListComponent = new PointListView();
     this._sortComponent = new SortView();
     this._noPoints = null;
+    this._tripInfoComponent = null;
     this._tripCostComponent = null;
     this._newPointPresenter = null;
+    this._newEventBtn = null;
 
     this._renderingPointPresenters = {};
-
-    this._tripInfoComponent = null;
 
     this._onCloseAllEdit = this._onCloseAllEdit.bind(this);
     this._onSortPoints = this._onSortPoints.bind(this);
@@ -62,9 +63,14 @@ export default class Trip {
     this._renderTripInfo();
     this._renderTripCost();
     this._renderSort();
+    this._filterPresenter.init();
     this._renderPointListConatiner();
     this._initNewPoint();
     this._renderPoints();
+
+    if(this._newEventBtn.getAttribute('disabled')) {
+      this._newEventBtn.removeAttribute('disabled');
+    }
   }
 
   _getPoints() {
@@ -94,9 +100,9 @@ export default class Trip {
     if (this._newPointPresenter) {
       return;
     }
-    const newEventBtn = document.querySelector('.trip-main__event-add-btn');
-    this._newPointPresenter = new NewPointPresenter(this._pointsContainer, this._offers, newEventBtn, this._sortComponent, this._handleViewAction);
-    newEventBtn.addEventListener('click', () => {
+    this._newEventBtn = document.querySelector('.trip-main__event-add-btn');
+    this._newPointPresenter = new NewPointPresenter(this._pointsContainer, this._offers, this._newEventBtn, this._sortComponent, this._handleViewAction);
+    this._newEventBtn.addEventListener('click', () => {
       this._newPointPresenter.init();
       this._onSortPoints(SORT_TYPE.DAY);
       this. _onCloseAllEdit();
@@ -116,9 +122,11 @@ export default class Trip {
   }
 
   _renderTripInfo() {
-    const tripMainContainer = this._pageBody.querySelector('.trip-main');
+    if (this._tripInfoComponent) {
+      remove(this._tripInfoComponent);
+    }
     this._tripInfoComponent = new TripInfoView(this._points);
-    render(tripMainContainer, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
+    render(this._tripMainContainer, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderTripCost() {
@@ -182,6 +190,20 @@ export default class Trip {
     }
   }
 
+  destroy() {
+    this._filterPresenter.filterDisabled();
+
+    remove(this._noPoints);
+    remove(this._sortComponent);
+
+    this._newPointPresenter.destroy();
+
+    Object.values(this._renderingPointPresenters).
+      forEach((presenter) => presenter.destroy());
+
+    this._newEventBtn.setAttribute('disabled', true);
+  }
+
   _onCloseAllEdit() {
     Object.values(this._renderingPointPresenters).
       forEach((presenter) => presenter.resetEditDefault());
@@ -212,12 +234,14 @@ export default class Trip {
   show() {
     if (this._pointListComponent.getElement().classList.contains('visually-hidden')) {
       this._pointListComponent.getElement().classList.remove('visually-hidden');
+      this._sortComponent.getElement().classList.remove('visually-hidden');
     }
   }
 
   hide() {
     if (!this._pointListComponent.getElement().classList.contains('visually-hidden')) {
       this._pointListComponent.getElement().classList.add('visually-hidden');
+      this._sortComponent.getElement().classList.add('visually-hidden');
     }
   }
 }
